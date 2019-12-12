@@ -1,0 +1,27 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/Auto_Off.PNG</file>
+        <file>images/Auto_On.PNG</file>
+        <file>images/Run.PNG</file>
+        <file>images/Stop.PNG</file>
+        <file>images/but_01auto_click.JPG</file>
+        <file>images/but_01auto_select.JPG</file>
+        <file>images/but_02manual_click.JPG</file>
+        <file>images/but_02manual_select.JPG</file>
+        <file>images/but_03data_click.JPG</file>
+        <file>images/but_03data_select.JPG</file>
+        <file>images/but_04teach_click.JPG</file>
+        <file>images/but_04teach_select.JPG</file>
+        <file>images/but_setting_click.JPG</file>
+        <file>images/but_setting_select.JPG</file>
+        <file>images/GTC.PNG</file>
+        <file>images/Samsung.JPG</file>
+        <file>images/but_standby_off_disable.JPG</file>
+        <file>images/but_standby_off_click.JPG</file>
+        <file>images/bg_top_img_1920.jpg</file>
+        <file>images/bg_top_img.jpg</file>
+        <file>images/bg_bottom.JPG</file>
+        <file>images/OK.PNG</file>
+        <file>images/NG.PNG</file>
+    </qresource>
+</RCC>
