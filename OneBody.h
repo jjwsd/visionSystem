@@ -20,8 +20,11 @@
 #include <VisionModule/cPatternMatchModule.h>
 #include <VisionModule/CVisionModuleMgr.h>
 #include <WorkerThread/ImageProcessWorker.h>
-
 #include <logger.h>
+
+#include <UI/AutoModeTabUI.h>
+#include <UI/TeachModeTabUI.h>
+#include <UI/ManualModeTabUI.h>
 
 class CameraData;
 class CModelData;
@@ -40,13 +43,16 @@ public:
     explicit OneBody(QWidget *parent = nullptr);
     ~OneBody();
 
+    bool event(QEvent * e);
+
     static void imi_cam_frame_cb(PNImageFrame pImgFrame);
 
     static CameraData * pFrameData;
     static bool  bIsAutoMode;
     static CAM::CamStreamMode  m_eCamStreamMode;
     static QVector<QRgb> sColorTable;
-    static QMutex * m_GrabImg;    
+    static QMutex * m_GrabImg;
+    static bool bFirstTimeRun;
 
     Ui::OneBody* GetUI() const;
 
@@ -62,24 +68,17 @@ private:
     void releaseWorkerThread();
     void releaseCameraResource();
 
-    void setCamStreamMode(CAM::CamStreamMode streamMode);
     void delay(const int milliSeconds);
 
-    void convertToQImageRgbFormat(unsigned char *pBuffer, unsigned int nW, unsigned int nH, QImage& image);
-
-    bool grabQPixmap(QPixmap& image);
-    bool grabMat(Mat& matImg);
-
-    bool grabQPixmapByRoi(QPixmap& image, QRect& roi);
-    bool grabMatByRoi(Mat& matImg, QRect& roi);
+    void convertToQImageRgbFormat(unsigned char *pBuffer, unsigned int nW, unsigned int nH, QImage& image); 
 
     QThread m_imgSaveThread;
     QThread m_imgProcThread;
     QThread m_logThread;
 
-    ImageProcessWorker * m_ImgProcessWorker;
-
-    QRect m_Roi;
+    AutoModeTabUI m_AutoModeTab;
+    TeachModeTabUI m_TeachModeTab;
+    ManualModeTabUI m_ManualModeTab;
 
     //Logger resultLogger;
 
@@ -252,9 +251,7 @@ signals:
     void sigTestMSg(const QtMsgType& type, const QString & tag, const QString & msg);
 
 private:
-    Ui::OneBody *ui;
-    CXmlParser xml;
-    CModelData * p_ModelData;
+    Ui::OneBody *ui;        
     COpcUa g_opcUA;
 
     QPixmap * m_RawImage;
@@ -294,16 +291,28 @@ private:
     QString inspLoadfileName;
 
     bool m_bAcqStart = false;
-    bool m_bStop = false;
-    bool m_bAutoModeStart = false;
+    bool m_bStop = false;    
 
     CPatternMatchModule m_cPatternModule;
 
+public:
+    CXmlParser xml;
     CVisionModuleMgr m_cVisionModuleMgr;
 
     QTimer* m_pTimerAutoMode;
 
     std::list<CVisionAgentResult> m_lAutoVisionResult;
+    CModelData * p_ModelData;
+    QRect m_Roi;
+    bool m_bAutoModeStart = false;
+    ImageProcessWorker * m_ImgProcessWorker;
+
+    void setCamStreamMode(CAM::CamStreamMode streamMode);
+    bool grabQPixmap(QPixmap& image);
+    bool grabMat(Mat& matImg);
+
+    bool grabQPixmapByRoi(QPixmap& image, QRect& roi);
+    bool grabMatByRoi(Mat& matImg, QRect& roi);
 };
 
 #endif // ONEBODY_H

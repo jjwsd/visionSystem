@@ -33,6 +33,7 @@ eIMIFormat OneBody::m_eIMIFormat = BAYERGR8;
 QMutex * OneBody::m_GrabImg = nullptr;
 CameraData * OneBody::pFrameData = nullptr;
 bool   OneBody::bIsAutoMode = false;
+bool   OneBody::bFirstTimeRun = false;
 CAM::CamStreamMode   OneBody::m_eCamStreamMode = CAM::LIVE_STREAM;
 
 OneBody::OneBody(QWidget *parent) :
@@ -111,10 +112,10 @@ OneBody::OneBody(QWidget *parent) :
     QObject::connect(ui->teachPatternResize, SIGNAL(textChanged(QString)), this, SLOT(resize_value(QString)));
 
     // auto Mode
-    QObject::connect(ui->autoBtnOpenVisionModule,SIGNAL(clicked()),this,SLOT(automode_openModuleBtn_clicked()));
-    QObject::connect(ui->autoRunStopBtn, SIGNAL(clicked()),this, SLOT(automode_runAutoBtn_clicked()));
-    QObject::connect(ui->autoTriggerBtn, SIGNAL(clicked()),this, SLOT(automode_triggerBtn_clicked()));
-    QObject::connect(ui->autoTriggerBtn, SIGNAL(clicked()),this, SLOT(automode_triggerBtn_enable()));
+    QObject::connect(ui->autoBtnOpenVisionModule,SIGNAL(clicked()),&m_AutoModeTab,SLOT(cbOpenAutoModuleBtnClicked()));
+    QObject::connect(ui->autoRunStopBtn, SIGNAL(clicked()),&m_AutoModeTab, SLOT(cbRunAutoModuleBtnClicked()));
+    QObject::connect(ui->autoTriggerBtn, SIGNAL(clicked()),&m_AutoModeTab, SLOT(cbSWTriggerBtnClicked()));
+    QObject::connect(ui->autoTriggerBtn, SIGNAL(clicked()),&m_AutoModeTab, SLOT(cbSWTriggerBtnEnabled()));
 }
 
 OneBody::~OneBody()
@@ -122,6 +123,16 @@ OneBody::~OneBody()
     releaseWorkerThread();
     releaseCameraResource();
     delete ui;
+}
+
+bool OneBody::event(QEvent * e)
+{
+    if(e->type() == QEvent::WindowActivate && OneBody::bFirstTimeRun == false){
+        OneBody::bFirstTimeRun = true;
+        qDebug() << QEvent::WindowActivate;
+        m_AutoModeTab.SetMainUi(ui);
+    }
+    return QWidget::event(e);
 }
 
 void OneBody::Init_UI_State()
@@ -253,15 +264,15 @@ void OneBody::load_settings()
     ui->settingOffsetXSlider->setMaximum(0);
     ui->settingOffsetYSlider->setMaximum(0);
 
-    m_CamSizeInfo.width = 1944;
-    m_CamSizeInfo.height = 2264;
-    m_CamSizeInfo.x = 1880;
-    m_CamSizeInfo.y = 792;
+//    m_CamSizeInfo.width = 1944;
+//    m_CamSizeInfo.height = 2264;
+//    m_CamSizeInfo.x = 1880;
+//    m_CamSizeInfo.y = 792;
 
-//    m_CamSizeInfo.width = 5184;
-//    m_CamSizeInfo.height = 3888;
-//    m_CamSizeInfo.x = 0;
-//    m_CamSizeInfo.y = 0;
+    m_CamSizeInfo.width = 5184;
+    m_CamSizeInfo.height = 3888;
+    m_CamSizeInfo.x = 0;
+    m_CamSizeInfo.y = 0;
 
     ui->settingWidthSlider->setValue(m_CamSizeInfo.width);
     ui->settingHeightSlider->setValue(m_CamSizeInfo.height);

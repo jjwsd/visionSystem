@@ -43,7 +43,12 @@ SOURCES += \
     WorkerThread/ImageSaveWorker.cpp \
     VisionModule/CVisionModuleMgr.cpp \
     WorkerThread/LogManagerWorker.cpp \
-    logger.cpp
+    logger.cpp \
+    UI/AutoModeTabUI.cpp \
+    UI/TabUI.cpp \
+    UI/TeachModeTabUI.cpp \
+    UI/ManualModeTabUI.cpp \
+    UI/DataModeTabUI.cpp
 
 HEADERS += \
         CXmlParser.h \
@@ -67,7 +72,12 @@ HEADERS += \
     WorkerThread/ImageSaveWorker.h \
     VisionModule/CVisionModuleMgr.h \
     WorkerThread/LogManagerWorker.h \
-    logger.h
+    logger.h \
+    UI/AutoModeTabUI.h \
+    UI/TabUI.h \
+    UI/TeachModeTabUI.h \
+    UI/ManualModeTabUI.h \
+    UI/DataModeTabUI.h
 
 FORMS += \
         OneBody.ui
