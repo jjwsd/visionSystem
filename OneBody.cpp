@@ -72,8 +72,7 @@ OneBody::OneBody(QWidget *parent) :
     QObject::connect(ui->settingExpSpin,SIGNAL(valueChanged(int)),this,SLOT(set_exposure_spin(int)));
     QObject::connect(ui->settingGainSlider, SIGNAL(valueChanged(int)), this, SLOT(set_gain_slider(int)));
     QObject::connect(ui->settingGainSpin,SIGNAL(valueChanged(int)),this,SLOT(set_gain_spin(int)));
-    //QObject::connect(ui->settingSizeCombo,SIGNAL(currentIndexChanged(int)),this,SLOT(add_framerate_list(int)));
-    //QObject::connect(ui->settingCamApplyBtn,SIGNAL(clicked()),this,SLOT(on_clicked_resolution_applyBtn()));
+    QObject::connect(ui->settingBackBtn, SIGNAL(clicked()), this, SLOT(settingBackBtnClicked()));
     QObject::connect(ui->inspAlgoCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(select_teach_algo_tab(int)));
     QObject::connect(ui->inspGripBtn, SIGNAL(clicked()), this, SLOT(teachGrabBtnClicked()));
     QObject::connect(ui->inspSaveBtn, SIGNAL(clicked()), this, SLOT(teachImageSaveBtnClicked()));
@@ -100,6 +99,7 @@ OneBody::OneBody(QWidget *parent) :
     QObject::connect(ui->teachCircleCancelBtn, SIGNAL(clicked()), this, SLOT(delete_rect()));
     QObject::connect(ui->stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(delete_roi()));
     QObject::connect(ui->stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(delete_pattern_area()));
+    QObject::connect(ui->teachSettingBtn, SIGNAL(clicked()), this, SLOT(teachSettingBtnClicked()));
 
     QObject::connect(ui->teachCircleGetBtn, SIGNAL(clicked()), this, SLOT(get_radius()));
     //QObject::connect(ui->testPatternTempLoadBtn,SIGNAL(clicked()),this,SLOT(on_test_templete_load_btn()));
@@ -799,10 +799,10 @@ void OneBody::on_teach_temp_save_btn()
         temp = m_Pixmap->pixmap().copy(pRectModel->getRectPosBySceneCoord().toRect());
 
         QString fileName = QFileDialog::getSaveFileName(this, tr("Save Image"),
-                                                        QDir::currentPath(),
+                                                        "/home/nvidia/Pictures",
                                                         tr("Image File(*.png *.bmp *.jpg)"));
         QString name = QFileInfo(fileName).fileName();
-        QDir path = QDir::currentPath();
+        QDir path("/home/nvidia/Pictures");
 
         if(path.exists(name) == false)
         {
@@ -862,6 +862,16 @@ void OneBody::on_teach_temp_save_btn()
         delete pRectModel;
         pRectModel = nullptr;
     }
+}
+
+void OneBody::teachSettingBtnClicked()
+{
+    ui->stackedWidget->setCurrentIndex(4);
+}
+
+void OneBody::settingBackBtnClicked()
+{
+    ui->stackedWidget->setCurrentIndex(0);
 }
 
 void OneBody::set_threshold_low_slider(int value)
@@ -1920,7 +1930,7 @@ void OneBody::on_inspLoadBtn_clicked()
     QPixmap temp;
     inspLoadfileName.clear();
     inspLoadfileName = QFileDialog::getOpenFileName(this, tr("Load Image"),
-                                                    QDir::currentPath(),
+                                                    "/home/nvidia/Pictures",
                                                     tr("Image File(*.png *.bmp *.jpg)"));
     if (inspLoadfileName.isEmpty())
         return;
@@ -1939,7 +1949,7 @@ void OneBody::on_testLoadBtn_clicked()
     testFilenames.clear();
     QFileDialog *fileDlg = new QFileDialog(this);
     testFilenames = fileDlg->getOpenFileNames(this, "Select file",
-                                              QDir::currentPath(),
+                                              "/home/nvidia/Pictures",
                                               tr("Image File(*.png *.bmp *.jpg)"));
     if(testFilenames.empty())
         return;

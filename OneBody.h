@@ -180,6 +180,10 @@ private slots:
 
     void on_teach_temp_save_btn();
 
+    void teachSettingBtnClicked();
+
+    void settingBackBtnClicked();
+
     void set_threshold_low_slider(int value);
 
     void set_threshold_low_spin(int value);

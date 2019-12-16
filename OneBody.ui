@@ -1353,7 +1353,7 @@ background-color: rgb(255, 255, 255);</string>
          <enum>QFrame::Box</enum>
         </property>
         <property name="currentIndex">
-         <number>3</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="page2">
          <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -1364,14 +1364,14 @@ background-color: rgb(255, 255, 255);</string>
            <widget class="QGroupBox" name="groupBox">
             <property name="minimumSize">
              <size>
-              <width>0</width>
+              <width>220</width>
               <height>0</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
               <width>16777215</width>
-              <height>250</height>
+              <height>220</height>
              </size>
             </property>
             <property name="font">
@@ -1386,9 +1386,8 @@ background-color: rgb(255, 255, 255);</string>
              <enum>Qt::LeftToRight</enum>
             </property>
             <property name="styleSheet">
-             <string notr="true">QGroupBox::title{
-background-color: rgb(9, 32, 122);
-color: rgb(255, 255, 255);
+             <string notr="true">QGroupBox{
+border-style: outset;
 }</string>
             </property>
             <property name="title">
@@ -1397,9 +1396,15 @@ color: rgb(255, 255, 255);
             <property name="alignment">
              <set>Qt::AlignCenter</set>
             </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
             <layout class="QVBoxLayout" name="verticalLayout_19">
              <property name="spacing">
               <number>0</number>
+             </property>
+             <property name="sizeConstraint">
+              <enum>QLayout::SetDefaultConstraint</enum>
              </property>
              <property name="topMargin">
               <number>0</number>
@@ -1407,6 +1412,22 @@ color: rgb(255, 255, 255);
              <property name="bottomMargin">
               <number>0</number>
              </property>
+             <item>
+              <spacer name="verticalSpacer">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Fixed</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>10</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
              <item>
               <widget class="QLabel" name="label_57">
                <property name="minimumSize">
@@ -1732,10 +1753,16 @@ CANCEL</string>
           </item>
           <item>
            <widget class="QGroupBox" name="groupBox_2">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>80</height>
+             </size>
+            </property>
             <property name="maximumSize">
              <size>
               <width>16777215</width>
-              <height>110</height>
+              <height>80</height>
              </size>
             </property>
             <property name="font">
@@ -1747,7 +1774,9 @@ CANCEL</string>
              </font>
             </property>
             <property name="styleSheet">
-             <string notr="true"/>
+             <string notr="true">QGroupBox{
+border-style: outset;
+}</string>
             </property>
             <property name="title">
              <string/>
@@ -1755,9 +1784,15 @@ CANCEL</string>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
             </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
             <layout class="QVBoxLayout" name="verticalLayout_16">
              <property name="spacing">
               <number>5</number>
+             </property>
+             <property name="sizeConstraint">
+              <enum>QLayout::SetMinimumSize</enum>
              </property>
              <property name="topMargin">
               <number>0</number>
@@ -1808,13 +1843,13 @@ color: rgb(255, 255, 255);</string>
                    <property name="minimumSize">
                     <size>
                      <width>100</width>
-                     <height>40</height>
+                     <height>30</height>
                     </size>
                    </property>
                    <property name="maximumSize">
                     <size>
                      <width>100</width>
-                     <height>40</height>
+                     <height>30</height>
                     </size>
                    </property>
                    <property name="font">
@@ -1851,13 +1886,13 @@ background-color: rgb(0, 0, 0);</string>
                    <property name="minimumSize">
                     <size>
                      <width>140</width>
-                     <height>40</height>
+                     <height>30</height>
                     </size>
                    </property>
                    <property name="maximumSize">
                     <size>
                      <width>140</width>
-                     <height>40</height>
+                     <height>30</height>
                     </size>
                    </property>
                    <property name="font">
@@ -1898,13 +1933,13 @@ background-color: rgb(0, 0, 0);</string>
                      <property name="minimumSize">
                       <size>
                        <width>65</width>
-                       <height>40</height>
+                       <height>30</height>
                       </size>
                      </property>
                      <property name="maximumSize">
                       <size>
                        <width>65</width>
-                       <height>40</height>
+                       <height>30</height>
                       </size>
                      </property>
                      <property name="font">
@@ -1957,13 +1992,13 @@ background-color: rgb(0, 0, 0);</string>
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>320</height>
+              <height>300</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
               <width>16777215</width>
-              <height>320</height>
+              <height>300</height>
              </size>
             </property>
             <property name="font">
@@ -1975,9 +2010,8 @@ background-color: rgb(0, 0, 0);</string>
              </font>
             </property>
             <property name="styleSheet">
-             <string notr="true">QGroupBox::title{
-background-color: rgb(9, 32, 122);
-color: rgb(255, 255, 255);
+             <string notr="true">QGroupBox{
+border-style: outset;
 }</string>
             </property>
             <property name="title">
@@ -1986,9 +2020,15 @@ color: rgb(255, 255, 255);
             <property name="alignment">
              <set>Qt::AlignCenter</set>
             </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
             <layout class="QVBoxLayout" name="verticalLayout_3">
              <property name="spacing">
               <number>0</number>
+             </property>
+             <property name="sizeConstraint">
+              <enum>QLayout::SetMinimumSize</enum>
              </property>
              <property name="topMargin">
               <number>0</number>
@@ -2651,19 +2691,6 @@ color: rgb(255, 255, 255);</string>
                    </item>
                   </layout>
                  </item>
-                 <item>
-                  <spacer name="verticalSpacer_2">
-                   <property name="orientation">
-                    <enum>Qt::Vertical</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>20</width>
-                     <height>40</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
                 </layout>
                </widget>
                <widget class="QWidget" name="page_5">
@@ -3095,19 +3122,6 @@ color: rgb(255, 255, 255);</string>
                    </item>
                   </layout>
                  </item>
-                 <item>
-                  <spacer name="verticalSpacer">
-                   <property name="orientation">
-                    <enum>Qt::Vertical</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>20</width>
-                     <height>40</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
                 </layout>
                </widget>
               </widget>
@@ -3120,13 +3134,13 @@ color: rgb(255, 255, 255);</string>
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>170</height>
+              <height>150</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
               <width>16777215</width>
-              <height>170</height>
+              <height>150</height>
              </size>
             </property>
             <property name="font">
@@ -3139,9 +3153,8 @@ color: rgb(255, 255, 255);</string>
              </font>
             </property>
             <property name="styleSheet">
-             <string notr="true">QGroupBox::title{
-background-color: rgb(9, 32, 122);
-color: rgb(255, 255, 255);
+             <string notr="true">QGroupBox{
+border-style: outset;
 }</string>
             </property>
             <property name="title">
@@ -3154,6 +3167,9 @@ color: rgb(255, 255, 255);
              <bool>false</bool>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_35">
+             <property name="sizeConstraint">
+              <enum>QLayout::SetMinimumSize</enum>
+             </property>
              <property name="topMargin">
               <number>0</number>
              </property>
@@ -3383,6 +3399,139 @@ color: rgb(0, 0, 0);
                        </font>
                       </property>
                      </column>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox_6">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>90</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>90</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <family>Roboto Condensed</family>
+              <pointsize>1</pointsize>
+              <weight>50</weight>
+              <bold>false</bold>
+              <kerning>false</kerning>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QGroupBox{
+border-style: outset;
+}</string>
+            </property>
+            <property name="title">
+             <string/>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="flat">
+             <bool>false</bool>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_37">
+             <property name="sizeConstraint">
+              <enum>QLayout::SetMinimumSize</enum>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_38">
+               <item>
+                <widget class="QLabel" name="label_61">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>35</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>35</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <family>Roboto Condensed</family>
+                   <pointsize>20</pointsize>
+                   <weight>75</weight>
+                   <bold>true</bold>
+                  </font>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">background-color: rgb(9, 32, 122);
+color: rgb(255, 255, 255);</string>
+                 </property>
+                 <property name="text">
+                  <string>CAMERA SETTING</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_72">
+                 <item>
+                  <layout class="QVBoxLayout" name="verticalLayout_13">
+                   <item>
+                    <widget class="QPushButton" name="teachSettingBtn">
+                     <property name="minimumSize">
+                      <size>
+                       <width>150</width>
+                       <height>40</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>150</width>
+                       <height>40</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>Roboto Condensed</family>
+                       <pointsize>16</pointsize>
+                       <weight>75</weight>
+                       <bold>true</bold>
+                      </font>
+                     </property>
+                     <property name="styleSheet">
+                      <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(64, 129, 193);
+border-width: 1px;
+padding: 5px;
+border-radius: 5px;</string>
+                     </property>
+                     <property name="text">
+                      <string>SETTING</string>
+                     </property>
                     </widget>
                    </item>
                   </layout>
@@ -6241,19 +6390,6 @@ background-color: qlineargradient(spread:reflect, x1:0.5, y1:0, x2:0.5, y2:0.5, 
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_18">
                  <item>
-                  <spacer name="horizontalSpacer_2">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                 <item>
                   <widget class="QPushButton" name="settingFormSizeApplyBtn">
                    <property name="minimumSize">
                     <size>
@@ -6305,6 +6441,46 @@ color: rgb(255, 255, 255);</string>
                     </size>
                    </property>
                   </spacer>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="settingBackBtn">
+                   <property name="minimumSize">
+                    <size>
+                     <width>120</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>120</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <family>Roboto Condensed</family>
+                     <pointsize>16</pointsize>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
+                   <property name="layoutDirection">
+                    <enum>Qt::LeftToRight</enum>
+                   </property>
+                   <property name="autoFillBackground">
+                    <bool>false</bool>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">background-color: rgb(30, 0, 90);
+color: rgb(255, 255, 255);</string>
+                   </property>
+                   <property name="text">
+                    <string>Back</string>
+                   </property>
+                   <property name="autoDefault">
+                    <bool>false</bool>
+                   </property>
+                  </widget>
                  </item>
                 </layout>
                </item>
@@ -6537,12 +6713,12 @@ background-repeat:none;
    <slot>setCurrentIndex(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>210</x>
-     <y>151</y>
+     <x>56</x>
+     <y>97</y>
     </hint>
     <hint type="destinationlabel">
-     <x>325</x>
-     <y>94</y>
+     <x>99</x>
+     <y>97</y>
     </hint>
    </hints>
   </connection>
