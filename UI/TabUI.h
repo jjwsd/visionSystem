@@ -1,8 +1,6 @@
 #ifndef TABUI_H
 #define TABUI_H
 
-
-
 namespace Ui { class OneBody; }
 
 class OneBody;

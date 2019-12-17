@@ -25,6 +25,7 @@
 #include <UI/AutoModeTabUI.h>
 #include <UI/TeachModeTabUI.h>
 #include <UI/ManualModeTabUI.h>
+#include <UI/DataModeTabUI.h>
 
 class CameraData;
 class CModelData;
@@ -79,6 +80,7 @@ private:
     AutoModeTabUI m_AutoModeTab;
     TeachModeTabUI m_TeachModeTab;
     ManualModeTabUI m_ManualModeTab;
+    DataModeTabUI m_DataModeTab;
 
     //Logger resultLogger;
 
@@ -221,14 +223,6 @@ private slots:
 
     void on_dataWriteBtn_clicked();
 
-    void automode_openModuleBtn_clicked();
-
-    void automode_runAutoBtn_clicked();
-
-    void automode_triggerBtn_clicked();
-
-    void automode_triggerBtn_enable();
-
     void cbAutoTabGetVisionProcessResult(_MatImg mat, CVisionAgentResult result);
     void cbTestTabGetVisionProcessResult(_MatImg mat, CVisionAgentResult result);
     void cbUpdateMainViewer(QPixmap);
@@ -251,6 +245,8 @@ signals:
     void sigTestMSg(const QtMsgType& type, const QString & tag, const QString & msg);
 
 private:
+    void automode_triggerBtn_enable();
+
     Ui::OneBody *ui;        
     COpcUa g_opcUA;
 

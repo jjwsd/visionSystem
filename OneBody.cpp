@@ -131,6 +131,9 @@ bool OneBody::event(QEvent * e)
         OneBody::bFirstTimeRun = true;
         qDebug() << QEvent::WindowActivate;
         m_AutoModeTab.SetMainUi(ui);
+        m_ManualModeTab.SetMainUi(ui);
+        m_TeachModeTab.SetMainUi(ui);
+        m_DataModeTab.SetMainUi(ui);
     }
     return QWidget::event(e);
 }
@@ -1339,109 +1342,6 @@ void OneBody::on_dataWriteBtn_clicked()
 {
     QString tmp = ui->dataNodeIDEdit->toPlainText();
     //g_opcUA.write_node(tmp.toUtf8().data());
-}
-
-void OneBody::automode_openModuleBtn_clicked()
-{
-    QFileDialog *fileDlg = new QFileDialog(this);
-    fileDlg->setNameFilter(tr("XML File(*.xml)"));
-    fileDlg->setViewMode(QFileDialog::Detail);
-    fileDlg->setFileMode(QFileDialog::ExistingFiles);
-
-    if(fileDlg->exec() == QDialog::Accepted)
-    {
-        m_cVisionModuleMgr.m_VisionModuleMap.clear();
-        QStringList fileNames = fileDlg->selectedFiles();
-        QString xmlName;
-        QStringList::const_iterator constIterator;
-        int i = 0;
-        for (constIterator = fileNames.constBegin(); constIterator != fileNames.constEnd();++constIterator)
-        {
-            xmlName = (*constIterator).toLocal8Bit().constData();
-            xml.openXmlFile(xmlName, p_ModelData);
-
-            m_Roi = QRect(p_ModelData->m_iStartX, p_ModelData->m_iStartY, p_ModelData->m_iEndX, p_ModelData->m_iEndY);
-
-            if(p_ModelData->m_iAlgoType == VISION::PATTERN)
-            {
-                QString testTemplate = QFileInfo(p_ModelData->m_qsTemplate).fileName();
-                QString testTemplatePath = QFileInfo(p_ModelData->m_qsTemplate).path();
-                testTemplatePath += "/";
-
-                cv::String templateFolder(testTemplatePath.toStdString());
-                cv::String templateName(testTemplate.toStdString());
-
-                CPatternMatchModule * pPatternMatch = new CPatternMatchModule();
-                pPatternMatch->SetResizeRatio(p_ModelData->m_iResize);
-                pPatternMatch->InitPath(templateFolder, templateName);
-
-                m_cVisionModuleMgr.m_VisionModuleMap.insert(std::make_pair(i++, pPatternMatch));
-            }
-        }
-    }
-    QPixmap pixmap;
-    QPixmap canny;
-    QString tempPath = QFileInfo(p_ModelData->m_qsTemplate).path();
-    pixmap.load(p_ModelData->m_qsTemplate);
-    canny.load(tempPath + QString("/contour_def_canny_totally.bmp"));
-
-    ui->manualPatternImage->setPixmap(pixmap);
-    ui->manualCannyImage->setPixmap(canny);
-
-    ui->tableWidgetAutoModuleList->clear();
-    ui->tableWidgetAutoModuleList->setHorizontalHeaderItem(0, new QTableWidgetItem("Seqeunce Num"));
-    ui->tableWidgetAutoModuleList->setHorizontalHeaderItem(1, new QTableWidgetItem("Vision Type"));
-    ui->tableWidgetAutoModuleList->setRowCount(m_cVisionModuleMgr.m_VisionModuleMap.size());
-
-    QTableWidgetItem *firstItem;
-    QTableWidgetItem *secondItem;
-    unsigned int iCount = 0;
-    for (auto var = m_cVisionModuleMgr.m_VisionModuleMap.begin(); var != m_cVisionModuleMgr.m_VisionModuleMap.end(); ++var) {
-        firstItem = new QTableWidgetItem(tr("%1").arg(var->first));
-        secondItem = new QTableWidgetItem(tr("%1").arg(var->second->GetName().c_str()));
-        ui->tableWidgetAutoModuleList->setItem(iCount, 0, firstItem);
-        ui->tableWidgetAutoModuleList->setItem(iCount, 1, secondItem);
-        ++iCount;
-    }
-}
-
-void OneBody::automode_runAutoBtn_clicked()
-{
-    m_lAutoVisionResult.clear();
-    if(m_bAutoModeStart == false)
-    {
-        m_bAutoModeStart = true;
-        m_ImgProcessWorker->m_pWorkerModule = m_cVisionModuleMgr.m_VisionModuleMap.begin()->second;
-    }
-    else
-    {
-        m_bAutoModeStart = false;
-    }
-}
-
-void OneBody::automode_triggerBtn_clicked()
-{
-    if(m_bAutoModeStart)
-    {
-        setCamStreamMode(CAM::LIVE_STOP);
-        Mat img;
-        if(m_Roi.right() <= 0 || m_Roi.bottom() <= 0)
-        {
-            if(grabMat(img))
-            {
-                emit sigSendMatImgToWorkerThread(img);
-            }
-        }
-        else
-        {
-            if(grabMatByRoi(img, m_Roi))
-            {
-                emit sigSendMatImgToWorkerThread(img);
-            }
-        }
-        ui->autoTriggerBtn->setStyleSheet("color: rgb(180,180,180);");
-        ui->autoTriggerBtn->setEnabled(false);
-    }
 }
 
 void OneBody::automode_triggerBtn_enable()
