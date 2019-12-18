@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <UI/TabUI.h>
+#include <Data/definedata.h>
 
 class TeachModeTabUI : public QObject, public TabUI
 {
@@ -13,6 +14,30 @@ public:
 signals:
 
 public slots:
+    //
+    void cbTeachLiveBtnClicked();
+    void cbTeachGrabBtnClicked();
+    void cbTeachImageSaveBtnClicked();
+    void cbTeachImageLoadBtnClicked();
+    void cbTeachROIShowBtnClicked();
+    void cbTeachROICancelBtnClicked();
+    void cbTeachSelectAlgoCombo(int value);
+    void cbTeachPatternRectShowBtnClicked();
+    void cbTeachPatternImageSaveBtnClicked();
+    void cbTeachPatternResizeValueChanged(QString rValue);
+    void cbTeachThresholdSliderPressed();
+    void cbTeachCircleThresholdLowSliderValueChanged(int value);
+    void cbTeachCircleThresholdLowSpinValueChanged(int value);
+    void cbTeachCircleCreateBtnClicked();
+    void cbTeachCircleCancelBtnClicked();
+    void cbTeachCircleGetBtnClicked();
+    void cbTeachCircleThresholdHighSliderValueChanged(int value);
+    void cbTeachCircleThresholdHighSpinValueChanged(int value);
+    void cbTeachModelSaveBtnClicked();
+    void cbTeachModelLoadBtnClicked();
+    void cbTeachModelTestBtnClicked();
+    void cbTeachSettingBtnClicked();
+
 };
 
 #endif // TEACHMODETABUI_H

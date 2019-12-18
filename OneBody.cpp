@@ -51,22 +51,48 @@ OneBody::OneBody(QWidget *parent) :
     load_settings();
     p_ModelData = new CModelData;
 
-    QObject::connect(ui->teachFileSaveBtn, SIGNAL(clicked()), this, SLOT(on_clicked_data_save_btn()));
-    QObject::connect(ui->teachFileLaodBtn, SIGNAL(clicked()), this, SLOT(on_clicked_data_open_btn()));
-    QObject::connect(ui->manualFileLoadBtn, SIGNAL(clicked()), this, SLOT(on_clicked_data_open_btn()));
-    QObject::connect(ui->dataConnectBtn, SIGNAL(clicked()), this, SLOT(on_dataStartBtn_clicked()));
-    QObject::connect(ui->dataReadBtn, SIGNAL(clicked()), this, SLOT(on_dataReadBtn_clicked()));
-    QObject::connect(ui->dataDisconBtn, SIGNAL(clicked()), this, SLOT(on_dataDisconnectBtn_clicked()));
+    // auto Mode
+    QObject::connect(ui->autoBtnOpenVisionModule,SIGNAL(clicked()),&m_AutoModeTab,SLOT(cbOpenAutoModuleBtnClicked()));
+    QObject::connect(ui->autoRunStopBtn, SIGNAL(clicked()),&m_AutoModeTab, SLOT(cbRunAutoModuleBtnClicked()));
+    QObject::connect(ui->autoTriggerBtn, SIGNAL(clicked()),&m_AutoModeTab, SLOT(cbSWTriggerBtnClicked()));
+    QObject::connect(ui->autoTriggerBtn, SIGNAL(clicked()),&m_AutoModeTab, SLOT(cbSWTriggerBtnEnabled()));
 
-    QObject::connect(ui->dataLibLoadUserModule, SIGNAL(clicked()), this, SLOT(on_dataLibLoadModuleBtn_clicked()));
-    QObject::connect(ui->dataLibMakeUserModule, SIGNAL(clicked()), this, SLOT(on_dataLibMakeModuleBtn_clicked()));
+    //teach
+    QObject::connect(ui->inspLiveBtn,SIGNAL(clicked()),&m_TeachModeTab,SLOT(cbTeachLiveBtnClicked()));
+    QObject::connect(ui->inspGripBtn, SIGNAL(clicked()), &m_TeachModeTab, SLOT(cbTeachGrabBtnClicked()));
+    QObject::connect(ui->inspSaveBtn, SIGNAL(clicked()), &m_TeachModeTab, SLOT(cbTeachImageSaveBtnClicked()));
+    QObject::connect(ui->teachLoadBtn, SIGNAL(clicked()), &m_TeachModeTab, SLOT(cbTeachImageLoadBtnClicked()));
+    QObject::connect(ui->inspROIOkBtn,SIGNAL(clicked()),&m_TeachModeTab,SLOT(cbTeachROIShowBtnClicked()));
+    QObject::connect(ui->inspROICancelBtn,SIGNAL(clicked()),&m_TeachModeTab,SLOT(cbTeachROICancelBtnClicked()));
+    QObject::connect(ui->inspAlgoCombo, SIGNAL(currentIndexChanged(int)), &m_TeachModeTab, SLOT(cbTeachSelectAlgoCombo(int)));
+    QObject::connect(ui->inspPatternOKBtn,SIGNAL(clicked()),&m_TeachModeTab,SLOT(cbTeachPatternRectShowBtnClicked()));
+    QObject::connect(ui->teachTempSaveBtn,SIGNAL(clicked()),&m_TeachModeTab,SLOT(cbTeachPatternImageSaveBtnClicked();));
+    QObject::connect(ui->teachPatternResize, SIGNAL(textChanged(QString)), &m_TeachModeTab, SLOT(cbTeachPatternResizeValueChanged(QString)));
+    QObject::connect(ui->teachCircleThreshLowSlider, SIGNAL(sliderPressed()), &m_TeachModeTab, SLOT(cbTeachThresholdSliderPressed()));
+    QObject::connect(ui->teachCircleThreshLowSlider, SIGNAL(valueChanged(int)), &m_TeachModeTab, SLOT(cbTeachCircleThresholdLowSliderValueChanged(int)));
+    QObject::connect(ui->teachCircleThreshLowSpin, SIGNAL(valueChanged(int)), &m_TeachModeTab, SLOT(cbTeachCircleThresholdLowSpinValueChanged(int)));
+    QObject::connect(ui->teachCircleThreshHighSlider, SIGNAL(sliderPressed()), &m_TeachModeTab, SLOT(cbTeachThresholdSliderPressed()));
+    QObject::connect(ui->teachCircleThreshHighSlider, SIGNAL(valueChanged(int)), &m_TeachModeTab, SLOT(cbTeachCircleThresholdHighSliderValueChanged(int)));
+    QObject::connect(ui->teachCircleThreshHighSpin, SIGNAL(valueChanged(int)), &m_TeachModeTab, SLOT(cbTeachCircleThresholdHighSpinValueChanged(int)));
+    QObject::connect(ui->teachCircleCreateBtn, SIGNAL(clicked()), &m_TeachModeTab, SLOT(cbTeachCircleCreateBtnClicked()));
+    QObject::connect(ui->teachCircleCancelBtn, SIGNAL(clicked()), &m_TeachModeTab, SLOT(cbTeachCircleCancelBtnClicked()));
+    QObject::connect(ui->teachCircleGetBtn, SIGNAL(clicked()), &m_TeachModeTab, SLOT(cbTeachCircleGetBtnClicked()));
+    QObject::connect(ui->teachRectThreshLowSlider, SIGNAL(valueChanged(int)), &m_TeachModeTab, SLOT(cbTeachCircleThresholdLowSliderValueChanged(int)));
+    QObject::connect(ui->teachRectThreshLowSpin, SIGNAL(valueChanged(int)), &m_TeachModeTab, SLOT(cbTeachCircleThresholdLowSpinValueChanged(int)));
+    QObject::connect(ui->teachRectThreshHighSlider, SIGNAL(valueChanged(int)), &m_TeachModeTab, SLOT(cbTeachCircleThresholdHighSliderValueChanged(int)));
+    QObject::connect(ui->teachRectThreshHighSpin, SIGNAL(valueChanged(int)), &m_TeachModeTab, SLOT(cbTeachCircleThresholdHighSpinValueChanged(int)));
+    QObject::connect(ui->teachFileSaveBtn, SIGNAL(clicked()), &m_TeachModeTab, SLOT(cbTeachModelSaveBtnClicked()));
+    QObject::connect(ui->teachFileLaodBtn, SIGNAL(clicked()), &m_TeachModeTab, SLOT(cbTeachModelLoadBtnClicked()));
+    QObject::connect(ui->teachModelTestBtn, SIGNAL(clicked()), &m_TeachModeTab, SLOT(cbTeachModelTestBtnClicked()));
+    QObject::connect(ui->stackedWidget, SIGNAL(currentChanged(int)), &m_TeachModeTab, SLOT(cbTeachROICancelBtnClicked()));
+    QObject::connect(ui->teachSettingBtn, SIGNAL(clicked()), &m_TeachModeTab, SLOT(cbTeachSettingBtnClicked()));
 
+    //teach setting
     QObject::connect(ui->settingWidthSlider, SIGNAL(valueChanged(int)), this, SLOT(set_width_slider(int)));
     QObject::connect(ui->settingHeightSlider, SIGNAL(valueChanged(int)), this, SLOT(set_height_slider(int)));
     QObject::connect(ui->settingOffsetXSlider, SIGNAL(valueChanged(int)), this, SLOT(set_offset_x_slider(int)));
     QObject::connect(ui->settingOffsetYSlider, SIGNAL(valueChanged(int)), this, SLOT(set_offset_y_slider(int)));
     QObject::connect(ui->settingFormSizeApplyBtn, SIGNAL(clicked()), this, SLOT(set_format_size()));
-
     QObject::connect(ui->settingExpAutoCheck, SIGNAL(stateChanged(int)),this,SLOT(on_exposure_auto_check()));
     QObject::connect(ui->settingGainAutoCheck, SIGNAL(stateChanged(int)),this,SLOT(on_gain_auto_check()));
     QObject::connect(ui->settingExpSlider, SIGNAL(valueChanged(int)), this, SLOT(set_exposure_slider(int)));
@@ -74,48 +100,21 @@ OneBody::OneBody(QWidget *parent) :
     QObject::connect(ui->settingGainSlider, SIGNAL(valueChanged(int)), this, SLOT(set_gain_slider(int)));
     QObject::connect(ui->settingGainSpin,SIGNAL(valueChanged(int)),this,SLOT(set_gain_spin(int)));
     QObject::connect(ui->settingBackBtn, SIGNAL(clicked()), this, SLOT(settingBackBtnClicked()));
-    QObject::connect(ui->inspAlgoCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(select_teach_algo_tab(int)));
-    QObject::connect(ui->inspGripBtn, SIGNAL(clicked()), this, SLOT(teachGrabBtnClicked()));
-    QObject::connect(ui->inspSaveBtn, SIGNAL(clicked()), this, SLOT(teachImageSaveBtnClicked()));
-    QObject::connect(ui->teachModelTestBtn, SIGNAL(clicked()), this, SLOT(teachTestBtnClicked()));
-    QObject::connect(ui->teachTempSaveBtn,SIGNAL(clicked()),this,SLOT(on_teach_temp_save_btn()));
-    QObject::connect(ui->inspROIOkBtn,SIGNAL(clicked()),this,SLOT(set_roi()));
-    QObject::connect(ui->inspROICancelBtn,SIGNAL(clicked()),this,SLOT(delete_roi()));
-    QObject::connect(ui->inspLiveBtn,SIGNAL(clicked()),this,SLOT(teachLiveBtnClicked()));
-    QObject::connect(ui->inspPatternOKBtn,SIGNAL(clicked()),this,SLOT(set_pattern_area()));
-    //QObject::connect(ui->inspPatternCancelBtn,SIGNAL(clicked()),this,SLOT(delete_pattern_area()));
 
-    QObject::connect(ui->teachCircleThreshLowSlider, &QAbstractSlider::sliderPressed, this, &OneBody::teachThreshHoldSliderPressed);
-    QObject::connect(ui->teachCircleThreshLowSlider, SIGNAL(valueChanged(int)), this, SLOT(set_threshold_low_slider(int)));
-    QObject::connect(ui->teachCircleThreshLowSpin, SIGNAL(valueChanged(int)), this, SLOT(set_threshold_low_spin(int)));
+    //manual
+    QObject::connect(ui->manualFileLoadBtn, SIGNAL(clicked()), &m_TeachModeTab, SLOT(cbTeachModelLoadBtnClicked()));
+    QObject::connect(ui->manualFileCancelBtn, SIGNAL(clicked()), &m_TeachModeTab, SLOT(cbManualModelCancelBtnClicked()));
+    QObject::connect(ui->manualLoadBtn, SIGNAL(clicked()), &m_ManualModeTab, SLOT(cbManualImageLoadBtnClicked()));
+    QObject::connect(ui->testFileClearBtn,SIGNAL(clicked()),&m_ManualModeTab,SLOT(cbManualImageClearBtnClicked()));
+    QObject::connect(ui->testTestBtn,SIGNAL(clicked()),&m_ManualModeTab,SLOT(cbManualRunBtnClicked()));
+    QObject::connect(ui->testResultTable,SIGNAL(cellPressed(int,int)),&m_ManualModeTab, SLOT(cbManualResultTableCellPressed(int, int)));
 
-    QObject::connect(ui->teachCircleThreshHighSlider, &QAbstractSlider::sliderPressed, this, &OneBody::teachThreshHoldSliderPressed);
-    QObject::connect(ui->teachCircleThreshHighSlider, SIGNAL(valueChanged(int)), this, SLOT(set_threshold_high_slider(int)));
-    QObject::connect(ui->teachCircleThreshHighSpin, SIGNAL(valueChanged(int)), this, SLOT(set_threshold_high_spin(int)));
-    QObject::connect(ui->teachRectThreshLowSlider, SIGNAL(valueChanged(int)), this, SLOT(set_threshold_low_slider(int)));
-    QObject::connect(ui->teachRectThreshLowSpin, SIGNAL(valueChanged(int)), this, SLOT(set_threshold_low_spin(int)));
-    QObject::connect(ui->teachRectThreshHighSlider, SIGNAL(valueChanged(int)), this, SLOT(set_threshold_high_slider(int)));
-    QObject::connect(ui->teachRectThreshHighSpin, SIGNAL(valueChanged(int)), this, SLOT(set_threshold_high_spin(int)));
-    QObject::connect(ui->teachCircleCreateBtn, SIGNAL(clicked()), this, SLOT(set_rect()));
-    QObject::connect(ui->teachCircleCancelBtn, SIGNAL(clicked()), this, SLOT(delete_rect()));
-    QObject::connect(ui->stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(delete_roi()));
-    QObject::connect(ui->stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(delete_pattern_area()));
-    QObject::connect(ui->teachSettingBtn, SIGNAL(clicked()), this, SLOT(teachSettingBtnClicked()));
-
-    QObject::connect(ui->teachCircleGetBtn, SIGNAL(clicked()), this, SLOT(get_radius()));
-    //QObject::connect(ui->testPatternTempLoadBtn,SIGNAL(clicked()),this,SLOT(on_test_templete_load_btn()));
-    QObject::connect(ui->testTestBtn,SIGNAL(clicked()),this,SLOT(testTabStartTest()));
-    //QObject::connect(ui->testTemplateDeleteBtn,SIGNAL(clicked()),this,SLOT(test_delete_template()));
-    QObject::connect(ui->testFileClearBtn,SIGNAL(clicked()),this,SLOT(test_delete_images()));
-    QObject::connect(ui->testResultTable,SIGNAL(cellPressed(int,int)),this, SLOT(show_out_images(int, int)));
-    QObject::connect(ui->manualFileCancelBtn, SIGNAL(clicked()), this, SLOT(cancel_model()));
-    QObject::connect(ui->teachPatternResize, SIGNAL(textChanged(QString)), this, SLOT(resize_value(QString)));
-
-    // auto Mode
-    QObject::connect(ui->autoBtnOpenVisionModule,SIGNAL(clicked()),&m_AutoModeTab,SLOT(cbOpenAutoModuleBtnClicked()));
-    QObject::connect(ui->autoRunStopBtn, SIGNAL(clicked()),&m_AutoModeTab, SLOT(cbRunAutoModuleBtnClicked()));
-    QObject::connect(ui->autoTriggerBtn, SIGNAL(clicked()),&m_AutoModeTab, SLOT(cbSWTriggerBtnClicked()));
-    QObject::connect(ui->autoTriggerBtn, SIGNAL(clicked()),&m_AutoModeTab, SLOT(cbSWTriggerBtnEnabled()));
+    //data
+    QObject::connect(ui->dataConnectBtn, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataConnectBtnClicked()));
+    QObject::connect(ui->dataReadBtn, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataReadBtnClicked()));
+    QObject::connect(ui->dataDisconBtn, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataDisconnectBtnClicked()));
+    QObject::connect(ui->dataLibLoadUserModule, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataLibLoadUserModule()));
+    QObject::connect(ui->dataLibMakeUserModule, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataLibMakeUserModule()));
 }
 
 OneBody::~OneBody()
@@ -449,12 +448,6 @@ void OneBody::set_gain_spin(int value)
     NeptuneSetGain(m_CamHandle, value, bAuto);
 }
 
-void OneBody::add_framerate_list(int value)
-{
-    QString str;
-    //ui->settingFrameCombo->clear();
-}
-
 void OneBody::on_clicked_resolution_applyBtn()
 {
     m_FrameData->m_iFrameCnt = 0;
@@ -473,188 +466,6 @@ void OneBody::on_clicked_resolution_applyBtn()
     {
 
     }
-}
-
-void OneBody::select_teach_algo_tab(int value)
-{
-    ui->teachOptionTab->setCurrentIndex(value);
-    p_ModelData->m_iAlgoType = value;
-}
-
-void OneBody::teachGrabBtnClicked()
-{
-    setCamStreamMode(CAM::LIVE_STOP);
-}
-
-void OneBody::teachImageSaveBtnClicked()
-{
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Save Image"),
-                                                    QDir::currentPath(),
-                                                    tr("Image File(*.png *.bmp *.jpg)"));
-    QPixmap pixmap;
-    if(grabQPixmap(pixmap))
-    {
-        emit sigSaveImgToWorkerThread(pixmap, fileName);
-    }
-}
-
-void OneBody::teachLiveBtnClicked()
-{
-    setCamStreamMode(CAM::LIVE_STREAM);
-}
-
-void OneBody::teachTestBtnClicked()
-{
-    setCamStreamMode(CAM::LIVE_STOP);
-    Mat input_img = cv::imread(inspLoadfileName.toStdString(),IMREAD_COLOR);
-    Mat output_img;
-    if(input_img.empty())
-    {
-        qDebug() << "input image null Error";
-        return;
-    }
-    m_cPatternModule.RunVision(input_img, output_img);
-    QImage img((uchar*)output_img.data,
-               output_img.cols,
-               output_img.rows,
-               output_img.step,
-               QImage::Format_RGB888);
-
-    QPixmap tmpPixmap = QPixmap::fromImage(img);
-    ui->autoImage->setPixmap(tmpPixmap);
-}
-
-//temp = m_Pixmap->pixmap().copy(pRectROI->getRectPosBySceneCoord().toRect());
-
-void OneBody::set_roi()
-{
-    NeptuneGetSizeInfo(m_CamHandle, &m_CamSizeInfo);
-
-    int sizeWidth = m_CamSizeInfo.width, sizeHeight = m_CamSizeInfo.height;
-    QRectF roiRect(sizeWidth/10, sizeHeight/10, (sizeWidth-sizeWidth/5), (sizeHeight-sizeHeight/5));
-
-    if(m_pRectRoi == nullptr)
-    {
-        m_pRectRoi = new UserRectItem();
-        qDebug() << "rectRoi = " <<m_pRectRoi->rect().left();
-        m_pRectRoi->setRect(roiRect);
-        m_pRectRoi->SetLineColor(Qt::darkGreen);
-        m_pRectRoi->setFlag(QGraphicsItem::ItemIsMovable);
-        ui->graphicsView->scene()->addItem(m_pRectRoi);
-        m_pRectRoi->show();
-    }
-}
-
-void OneBody::delete_roi()
-{
-    if(m_pRectRoi != nullptr)
-    {
-        //qDebug() << "!pRectROI->IsEmpty()";
-        ui->graphicsView->scene()->removeItem(m_pRectRoi);
-
-        delete m_pRectRoi;
-        m_pRectRoi = nullptr;
-    }
-    else
-    {
-        //qDebug() << "pRectROI->IsEmpty()";
-    }
-}
-
-void OneBody::set_pattern_area()
-{
-    NeptuneGetSizeInfo(m_CamHandle, &m_CamSizeInfo);
-    int sizeWidth = m_CamSizeInfo.width, sizeHeight=m_CamSizeInfo.height;
-    QRectF roiRect(sizeWidth/4, sizeHeight/4, (sizeWidth-sizeWidth/2), (sizeHeight-sizeHeight/2));
-
-    if(pRectModel == nullptr)
-    {
-        pRectModel = new UserRectItem();
-        qDebug() << "rectRoi = " << pRectModel->rect().left();
-        pRectModel->setRect(roiRect);
-        pRectModel->SetLineColor(Qt::magenta);
-        pRectModel->setFlag(QGraphicsItem::ItemIsMovable);
-        ui->graphicsView->scene()->addItem(pRectModel);
-        pRectModel->show();
-    }
-}
-
-void OneBody::delete_pattern_area()
-{
-    if(pRectModel != nullptr)
-    {
-        //qDebug() << "!pRectModel->IsEmpty()";
-        ui->graphicsView->scene()->removeItem(pRectModel);
-
-        delete pRectModel;
-        pRectModel = nullptr;
-    }
-    else
-    {
-        //qDebug() << "pRectModel->IsEmpty()";
-    }
-}
-
-void OneBody::set_rect()
-{
-    NeptuneGetSizeInfo(m_CamHandle, &m_CamSizeInfo);
-    int sizeWidth = m_CamSizeInfo.width, sizeHeight=m_CamSizeInfo.height;
-    QRectF roiRect(sizeWidth/4, sizeHeight/4, (sizeWidth-sizeWidth/2), (sizeHeight-sizeHeight/2));
-
-    if(pRect == nullptr)
-    {
-        pRect = new UserRectItem();
-        qDebug() << "rectRoi = " << pRect->rect().left();
-        pRect->setRect(roiRect);
-        pRect->SetLineColor(Qt::green);
-        pRect->setFlag(QGraphicsItem::ItemIsMovable);
-        ui->graphicsView->scene()->addItem(pRect);
-        pRect->show();
-    }
-}
-
-void OneBody::delete_rect()
-{
-    if(pRect != nullptr)
-    {
-        qDebug() << "!pRect->IsEmpty()";
-        ui->graphicsView->scene()->removeItem(pRect);
-
-        delete pRect;
-        pRect = nullptr;
-    }
-    else
-    {
-        qDebug() << "pRect->IsEmpty()";
-    }
-}
-
-void OneBody::cam_connect_status()
-{
-    //    if(tCount%2)
-    //        ui->connect->setStyleSheet("border-image: url(:/images/but_standby_off_disable.JPG);");
-    //    else
-    //        ui->connect->setStyleSheet("border-image: url(:/images/but_standby_off_click.JPG);");
-    //    tCount++;
-}
-
-void OneBody::on_test_templete_load_btn()
-{
-    QString fileName;
-    fileName = QFileDialog::getOpenFileName(this, tr("Load Image"),
-                                            QDir::currentPath(),
-                                            tr("Image File(*.png *.bmp *.jpg)"));
-
-    if (fileName.isEmpty())
-        return;
-
-    QPixmap temp;
-    temp.load(fileName);
-    //ui->testPatternImageLabel->setPixmap(temp);
-    //ui->testPatternTempName->setText(QFileInfo(fileName).fileName());
-    testTemplate = QFileInfo(fileName).fileName();
-    testTemplatePath = QFileInfo(fileName).path();
-    testTemplatePath += "/";
 }
 
 int g_iResizeRatio = 4;
@@ -785,185 +596,12 @@ void OneBody::pattern_matching()
     qDebug("TIME : %5.2fs ", img_preprocess_t);
 }
 
-void OneBody::test_delete_template()
-{
-    //ui->testPatternImageLabel->clear();
-    //ui->testPatternTempName->clear();
-    testTemplatePath.clear();
-}
-
-void OneBody::test_delete_images()
-{
-    ui->testListWidget->clear();
-    testFilenames.clear();
-    testFilePath.clear();
-}
-
-void OneBody::show_out_images(int row, int col)
-{
-    this->sigUpdateMainViewer(m_vTestTabImages.at(row));
-    qApp->processEvents();
-}
-
-void OneBody::on_teach_temp_save_btn()
-{
-    QPixmap temp;
-    if(pRectModel != nullptr)
-    {
-        temp = m_Pixmap->pixmap().copy(pRectModel->getRectPosBySceneCoord().toRect());
-
-        QString fileName = QFileDialog::getSaveFileName(this, tr("Save Image"),
-                                                        "/home/nvidia/Pictures",
-                                                        tr("Image File(*.png *.bmp *.jpg)"));
-        QString name = QFileInfo(fileName).fileName();
-        QDir path("/home/nvidia/Pictures");
-
-        if(path.exists(name) == false)
-        {
-            path.mkdir(name);
-            fileName += "/" + name;
-        }
-
-        qDebug() << fileName;
-
-        if(fileName.contains(".png", Qt::CaseInsensitive))
-        {
-            temp.save(fileName,"png");
-            //ui->teachTempLabel->setText(fileName);
-            p_ModelData->m_qsTemplate = fileName;
-        }
-        else
-        {
-            temp.save(fileName+".png","png");
-            //ui->teachTempLabel->setText(fileName+".png");
-            p_ModelData->m_qsTemplate = fileName+".png";
-        }
-        //ui->inspPatternImage->setPixmap(temp);
-
-        testTemplate = QFileInfo(p_ModelData->m_qsTemplate).fileName();
-        testTemplatePath = QFileInfo(p_ModelData->m_qsTemplate).path();
-        testTemplatePath += "/";
-
-        cv::String tpl_folder(testTemplatePath.toStdString());
-        cv::String template_name(testTemplate.toStdString());
-
-        m_cPatternModule.InitPath(tpl_folder, template_name);
-
-        QFile file(testTemplatePath + QString(m_cPatternModule.GetContourName().c_str()));
-        if(file.exists())
-        {
-            qDebug() << "pattern Matching file is already exist!";
-            return;
-        }
-        QMessageBox::information(this, tr("Pattern Matching Model GUIDE"),
-                                 tr("1. Erase Model Area - Mouse L-Button Down & Drag \n"
-                                    "2. Save Model - Mouse L-Button Double Click! "),
-                                 QMessageBox::Ok);
-
-        m_cPatternModule.MakeNewTemplate(g_iResizeRatio);
-    }
-    else
-    {
-        QMessageBox::information(this, tr("information"), "Check Pattern Area", QMessageBox::Close);
-        return;
-    }
-    if(pRectModel != nullptr)
-    {
-        qDebug() << "!pRectModel->IsEmpty()";
-        ui->graphicsView->scene()->removeItem(pRectModel);
-        //ui->graphicsView->scene()->removeItem(pRectModel);
-
-        delete pRectModel;
-        pRectModel = nullptr;
-    }
-}
-
-void OneBody::teachSettingBtnClicked()
-{
-    ui->stackedWidget->setCurrentIndex(4);
-}
-
 void OneBody::settingBackBtnClicked()
 {
     ui->stackedWidget->setCurrentIndex(0);
 }
 
-void OneBody::set_threshold_low_slider(int value)
-{
-    //setCamStreamMode(CAM::LIVE_STOP);
-    ui->teachCircleThreshLowSpin->setValue(value);
-    ui->teachRectThreshLowSpin->setValue(value);
-    p_ModelData->m_iThresholdLow = value;
-    m_iLowValue = value;
 
-    //cv::Mat matImage = CImageConverter::QPixmapToCvMat(g_Pixmap);
-
-    CImageProcess imgProcess;
-
-    cv::Mat destImg;
-    imgProcess.BinarizeImage(m_capturedImg, destImg, m_iLowValue, m_iHighValue);
-    cv::cvtColor(destImg, destImg, CV_GRAY2RGB);
-
-    QImage img((uchar*)destImg.data,
-               destImg.cols,
-               destImg.rows,
-               QImage::Format_RGB888);
-
-    m_Pixmap->setPixmap(QPixmap::fromImage(img));
-    ui->graphicsView->resize(ui->graphicsView->size());
-    ui->graphicsView->scene()->setSceneRect(m_Pixmap->boundingRect());
-    ui->graphicsView->update();
-}
-
-void OneBody::set_threshold_low_spin(int value)
-{
-    ui->teachCircleThreshLowSlider->setValue(value);
-    ui->teachRectThreshLowSlider->setValue(value);
-}
-
-void OneBody::set_threshold_high_slider(int value)
-{
-    //setCamStreamMode(CAM::LIVE_STOP);
-    ui->teachCircleThreshHighSpin->setValue(value);
-    ui->teachRectThreshHighSpin->setValue(value);
-    p_ModelData->m_iThresholdHigh = value;
-    m_iHighValue = value;
-
-    //cv::Mat matImage = CImageConverter::QPixmapToCvMat(g_Pixmap);
-
-    CImageProcess imgProcess;
-
-    cv::Mat destImg;
-    imgProcess.BinarizeImage(m_capturedImg, destImg, m_iLowValue, m_iHighValue);
-    cv::cvtColor(destImg, destImg, CV_GRAY2RGB);
-
-    QImage img((uchar*)destImg.data,
-               destImg.cols,
-               destImg.rows,
-               QImage::Format_RGB888);
-
-    m_Pixmap->setPixmap(QPixmap::fromImage(img));
-    ui->graphicsView->resize(ui->graphicsView->size());
-    ui->graphicsView->scene()->setSceneRect(m_Pixmap->boundingRect());
-    ui->graphicsView->update();
-}
-
-void OneBody::set_threshold_high_spin(int value)
-{
-    ui->teachCircleThreshHighSlider->setValue(value);
-    ui->teachRectThreshHighSlider->setValue(value);
-}
-
-void OneBody::get_radius()
-{
-    QRectF temp;
-    temp = pRect->getRectPosBySceneCoord().toRect();
-
-
-    qDebug() << temp.width();
-
-    ui->teachCircleRadEdit->setText(QString::number(temp.width()/2));
-}
 
 void OneBody::load_model()
 {
@@ -1074,18 +712,6 @@ void OneBody::temp_save_model()
     }
 }
 
-void OneBody::testTabStartTest()
-{
-    ui->testResultTable->clear();
-
-    if(p_ModelData->m_iAlgoType == 0)
-        pattern_matching();
-    else if(p_ModelData->m_iAlgoType == 1)
-        circle_algorithm();
-    else if(p_ModelData->m_iAlgoType == 2)
-        rect_algorithm();
-}
-
 void OneBody::circle_algorithm()
 {
     setCamStreamMode(CAM::LIVE_STOP);
@@ -1154,52 +780,9 @@ void OneBody::circle_algorithm()
         //m_Pixmap->setPixmap(QPixmap::fromImage(img));
         emit sigUpdateMainViewer(QPixmap::fromImage(img));
         qApp->processEvents();
-
-        //        ui->graphicsView->setTransform(QTransform());
-        //        ui->graphicsView->scene()->setSceneRect(m_Pixmap->boundingRect());
-        //        ui->graphicsView->scene()->update();
-        //        ui->graphicsView->fitInView(ui->graphicsView->scene()->sceneRect(), Qt::KeepAspectRatio);
         qDebug() << "finished";
     }
 
-
-
-    //        QString fileName;
-    //        fileName = QFileDialog::getOpenFileName(this, tr("Load Image"),
-    //                                                QDir::currentPath(),
-    //                                                tr("Image File(*.png *.bmp *.jpg)"));
-
-    //        if (fileName.isEmpty())
-    //            return;
-
-    //        QPixmap temp;
-    //        temp.load(fileName);
-
-    //    Mat dispImg;
-    //    CCircleParams params;
-    //    params.iRadius = 172;
-    //    params.dTolerance = 0.2;
-    //    params.iThresholdHigh = 90;
-    //    params.iThresholdLow = 0;
-    //    visionModule.SetParams(params);
-    //    visionModule.m_bDebugMode = true;
-
-    //    Mat srcImg = CImageConverter::QPixmapToCvMat(temp);
-    //    visionModule.RunVision(srcImg, dispImg);
-
-    //    cv::cvtColor(dispImg, dispImg, CV_BGR2RGB);
-
-    //    QImage img((uchar*)dispImg.data,
-    //               dispImg.cols,
-    //               dispImg.rows,
-    //               QImage::Format_RGB888);
-
-
-    //    m_Pixmap->setPixmap(QPixmap::fromImage(img));
-    //    ui->graphicsView->setTransform(QTransform());
-    //    ui->graphicsView->scene()->setSceneRect(m_Pixmap->boundingRect());
-    //    ui->graphicsView->scene()->update();
-    //    ui->graphicsView->fitInView(ui->graphicsView->scene()->sceneRect(), Qt::KeepAspectRatio);
 }
 
 void OneBody::circle_blob_algorithm()
@@ -1244,12 +827,6 @@ void OneBody::rect_algorithm()
 
 }
 
-void OneBody::cancel_model()
-{
-    p_ModelData->init();
-    init_model_ui();
-}
-
 void OneBody::init_model_ui()
 {
     //ui->manualAlgoTab->setCurrentIndex(p_ModelData->m_iAlgoType);
@@ -1270,78 +847,6 @@ void OneBody::init_model_ui()
     ui->teachRectNoCombo->setCurrentIndex(p_ModelData->m_iTargetNo);
     ui->teachRectWidthEdit->setText(QString::number(p_ModelData->m_iWidth));
     ui->teachRectHeightEdit->setText(QString::number(p_ModelData->m_iHeight));
-}
-
-////////////////////////////////////////////////////////////////////////////////////
-
-void OneBody::on_dataStartBtn_clicked()
-{
-    int temp = 0;
-    QString ipAddresss = "opc.tcp://" + ui->dataIPEdit->toPlainText();
-    g_opcUA.connect_server(ipAddresss.toUtf8().data());
-    ui->dataStatusEdit->setPlainText(ipAddresss + " : Connecting.. ");
-    temp = g_opcUA.connect_server(ipAddresss.toUtf8().data());
-    if(temp == 1)
-        ui->dataStatusEdit->setPlainText(ipAddresss + " Connected!!");
-    else
-        ui->dataStatusEdit->setPlainText(ipAddresss + " Connect Fail");
-}
-
-void OneBody::on_dataReadBtn_clicked()
-{
-    QString tmp = ui->dataNameSpaceEdit->toPlainText();
-    int iNamespace = tmp.toInt();
-    tmp = ui->dataNodeIDEdit->toPlainText();
-    std::string strResult = g_opcUA.read_node(iNamespace, tmp.toUtf8().data());
-    ui->dataValueEdit->setPlainText(QString::fromStdString(strResult));
-}
-
-void OneBody::on_dataDisconnectBtn_clicked()
-{
-    g_opcUA.disconnect_server();
-    ui->dataStatusEdit->setPlainText("DisConnected");
-}
-
-#include <dlfcn.h>
-#include <abc.h>
-void OneBody::on_dataLibLoadModuleBtn_clicked()
-{
-    QString soFileName = QFileDialog::getOpenFileName(this, tr("Load .so File"),
-                                                      QDir::currentPath(),
-                                                      tr("Library File(*.so)"));
-
-    //void * libHandle = dlopen("/home/nvidia/QT_Project/abcChild/libabc2.so", RTLD_LAZY);
-    void * libHandle = dlopen(soFileName.toStdString().c_str(), RTLD_LAZY);
-    if(libHandle  == NULL)
-    {
-        std::cout << "library Load Error!" << std::endl;
-        std::cout << dlerror() << std::endl;
-        return;
-    }
-
-    ABC* (*creator)() = (ABC*(*)())dlsym(libHandle, "create");
-    ABC* p = (*creator)();
-    p->show_message();
-
-    void (*destructor)(ABC*) = (void(*)(ABC*))dlsym(libHandle, "destroy");
-    (*destructor)(p);
-    dlclose(libHandle);
-}
-
-#include <QCoreApplication>
-#include <QTextStream>
-void OneBody::on_dataLibMakeModuleBtn_clicked()
-{
-    //    QCoreApplication a;
-    QTextStream stream(stdout);
-    stream << "void OneBody::on_dataLibMakeModuleBtn_clicked()";
-    //QString Line = stream.readLine();
-}
-
-void OneBody::on_dataWriteBtn_clicked()
-{
-    QString tmp = ui->dataNodeIDEdit->toPlainText();
-    //g_opcUA.write_node(tmp.toUtf8().data());
 }
 
 void OneBody::automode_triggerBtn_enable()
@@ -1871,78 +1376,6 @@ void OneBody::on_testLoadBtn_clicked()
     testFilePath = QFileInfo(testFilenames.at(0)).path();
 }
 
-void OneBody::on_clicked_data_save_btn()
-{
-    QFileDialog *filDlg = new QFileDialog(this);
-    QString fileNamePath =
-            filDlg->getSaveFileName(this, tr("Save Inspection Model File"),
-                                    QDir::currentPath(),
-                                    tr("XML Files(*.xml)"));
-
-    QString fileName = QFileInfo(fileNamePath).fileName();
-    if (fileName.isEmpty())
-        return;
-
-    temp_save_model();
-    xml.createXmlFile(fileName, p_ModelData);
-}
-
-void OneBody::on_clicked_data_open_btn()
-{
-    QFileDialog *filDlg = new QFileDialog(this);
-    QString fileNamePath =
-            filDlg->getOpenFileName(this, tr("Open Inspection Model File"),
-                                    QDir::currentPath(),
-                                    tr("XML File(*.xml)"));
-    //QString fileName = QFileInfo(fileNamePath).fileName();
-    if (fileNamePath.isEmpty())
-        return;
-
-    xml.openXmlFile(fileNamePath, p_ModelData);
-    load_model();
-    //ui->inspAlgoCombo->setCurrentIndex(p_ModelData->m_iAlgoType);
-    //ui->lightOnCheckBox->setChecked((bool)p_ModelData->m_ilightEnable);
-    //ui->lightValueEdit->setText(QString::number(p_ModelData->m_ilightValue));
-
-    ui->tableWidgetAutoModuleList_2->clear();
-    ui->tableWidgetAutoModuleList_2->setHorizontalHeaderItem(0, new QTableWidgetItem("Seq. Num"));
-    ui->tableWidgetAutoModuleList_2->setHorizontalHeaderItem(1, new QTableWidgetItem("Vision Type"));
-    ui->tableWidgetAutoModuleList_2->setRowCount(1);
-    ui->tableWidgetAutoModuleList_3->clear();
-    ui->tableWidgetAutoModuleList_3->setHorizontalHeaderItem(0, new QTableWidgetItem("Seq. Num"));
-    ui->tableWidgetAutoModuleList_3->setHorizontalHeaderItem(1, new QTableWidgetItem("Vision Type"));
-    ui->tableWidgetAutoModuleList_3->setRowCount(1);
-
-    QTableWidgetItem *firstItem = new QTableWidgetItem();
-    QTableWidgetItem *secondItem = new QTableWidgetItem();
-
-    firstItem->setText("0");
-    if(p_ModelData->m_iAlgoType==0)
-        secondItem->setText("Pattern");
-    else if(p_ModelData->m_iAlgoType==1)
-        secondItem->setText("Circle");
-    else if(p_ModelData->m_iAlgoType==2)
-        secondItem->setText("Rect");
-
-    ui->tableWidgetAutoModuleList_2->setItem(0, 0, firstItem);
-    ui->tableWidgetAutoModuleList_2->setItem(0, 1, secondItem);
-
-    QTableWidgetItem *first = new QTableWidgetItem();
-    QTableWidgetItem *second = new QTableWidgetItem();
-
-    first->setText("0");
-    if(p_ModelData->m_iAlgoType==0)
-        second->setText("Pattern");
-    else if(p_ModelData->m_iAlgoType==1)
-        second->setText("Circle");
-    else if(p_ModelData->m_iAlgoType==2)
-        second->setText("Rect");
-
-    ui->tableWidgetAutoModuleList_3->setItem(0, 0, first);
-    ui->tableWidgetAutoModuleList_3->setItem(0, 1, second);
-
-}
-
 void OneBody::cbUpdateMainViewer(QPixmap img)
 {
     m_MutexImg.lock();
@@ -1964,23 +1397,6 @@ void OneBody::cbUpdateAutoModeImage()
     ui->autoImage->setPixmap(m_Pixmap->pixmap());
     m_pTimerAutoMode->stop();
     setCamStreamMode(CAM::LIVE_STREAM);
-}
-
-void OneBody::resize_value(QString rValue)
-{
-    g_iResizeRatio = rValue.toInt();
-}
-
-void OneBody::teachThreshHoldSliderPressed()
-{
-    if(m_eCamStreamMode == CAM::LIVE_STREAM)
-    {
-        setCamStreamMode(CAM::LIVE_STOP);
-        if(grabMat(m_capturedImg))
-        {
-
-        }
-    }
 }
 
 void OneBody::logtabComboBoxSelected(int item)

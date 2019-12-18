@@ -84,7 +84,7 @@ private:
 
     //Logger resultLogger;
 
-private slots:
+public slots:
     void teachSaveImageResult(bool bResult);
 
     void on_connect_clicked();
@@ -110,10 +110,6 @@ private slots:
     void on_inspLoadBtn_clicked();
 
     void on_testLoadBtn_clicked();
-
-    void on_clicked_data_save_btn();
-
-    void on_clicked_data_open_btn();
 
     void Init_UI_State();
 
@@ -141,65 +137,15 @@ private slots:
 
     void set_gain_spin(int value);
 
-    void add_framerate_list(int value);
-
     void on_clicked_resolution_applyBtn();
-
-    void select_teach_algo_tab(int value);
-
-    void teachGrabBtnClicked();
-
-    void teachImageSaveBtnClicked();
-
-    void teachLiveBtnClicked();
-
-    void teachTestBtnClicked();
-
-    void set_roi();
-
-    void delete_roi();
-
-    void set_pattern_area();
-
-    void delete_pattern_area();
-
-    void set_rect();
-
-    void delete_rect();
-
-    void cam_connect_status();
-
-    void on_test_templete_load_btn();
 
     void pattern_matching();
 
-    void test_delete_template();
-
-    void test_delete_images();
-
-    void show_out_images(int row, int col);
-
-    void on_teach_temp_save_btn();
-
-    void teachSettingBtnClicked();
-
     void settingBackBtnClicked();
-
-    void set_threshold_low_slider(int value);
-
-    void set_threshold_low_spin(int value);
-
-    void set_threshold_high_slider(int value);
-
-    void set_threshold_high_spin(int value);
-
-    void get_radius();
 
     void load_model();
 
     void temp_save_model();
-
-    void testTabStartTest();
 
     void circle_algorithm();
 
@@ -207,30 +153,12 @@ private slots:
 
     void rect_algorithm();
 
-    void cancel_model();
-
     void init_model_ui();
-
-    void on_dataStartBtn_clicked();
-
-    void on_dataReadBtn_clicked();
-
-    void on_dataDisconnectBtn_clicked();
-
-    void on_dataLibLoadModuleBtn_clicked();
-
-    void on_dataLibMakeModuleBtn_clicked();
-
-    void on_dataWriteBtn_clicked();
 
     void cbAutoTabGetVisionProcessResult(_MatImg mat, CVisionAgentResult result);
     void cbTestTabGetVisionProcessResult(_MatImg mat, CVisionAgentResult result);
     void cbUpdateMainViewer(QPixmap);
     void cbUpdateAutoModeImage();
-
-    void resize_value(QString rValue);
-
-    void teachThreshHoldSliderPressed();
 
     void logtabComboBoxSelected(int item);
 
@@ -247,7 +175,26 @@ signals:
 private:
     void automode_triggerBtn_enable();
 
-    Ui::OneBody *ui;        
+public:
+    CXmlParser xml;
+    CVisionModuleMgr m_cVisionModuleMgr;
+
+    QTimer* m_pTimerAutoMode;
+
+    std::list<CVisionAgentResult> m_lAutoVisionResult;
+    CModelData * p_ModelData;
+    QRect m_Roi;
+    bool m_bAutoModeStart = false;
+    ImageProcessWorker * m_ImgProcessWorker;
+
+    void setCamStreamMode(CAM::CamStreamMode streamMode);
+    bool grabQPixmap(QPixmap& image);
+    bool grabMat(Mat& matImg);
+
+    bool grabQPixmapByRoi(QPixmap& image, QRect& roi);
+    bool grabMatByRoi(Mat& matImg, QRect& roi);
+
+    Ui::OneBody *ui;
     COpcUa g_opcUA;
 
     QPixmap * m_RawImage;
@@ -287,28 +234,9 @@ private:
     QString inspLoadfileName;
 
     bool m_bAcqStart = false;
-    bool m_bStop = false;    
+    bool m_bStop = false;
 
     CPatternMatchModule m_cPatternModule;
-
-public:
-    CXmlParser xml;
-    CVisionModuleMgr m_cVisionModuleMgr;
-
-    QTimer* m_pTimerAutoMode;
-
-    std::list<CVisionAgentResult> m_lAutoVisionResult;
-    CModelData * p_ModelData;
-    QRect m_Roi;
-    bool m_bAutoModeStart = false;
-    ImageProcessWorker * m_ImgProcessWorker;
-
-    void setCamStreamMode(CAM::CamStreamMode streamMode);
-    bool grabQPixmap(QPixmap& image);
-    bool grabMat(Mat& matImg);
-
-    bool grabQPixmapByRoi(QPixmap& image, QRect& roi);
-    bool grabMatByRoi(Mat& matImg, QRect& roi);
 };
 
 #endif // ONEBODY_H

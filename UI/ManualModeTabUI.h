@@ -13,6 +13,11 @@ public:
 signals:
 
 public slots:
+    void cbManualModelCancelBtnClicked();
+    void cbManualImageLoadBtnClicked();
+    void cbManualImageClearBtnClicked();
+    void cbManualRunBtnClicked();
+    void cbManualResultTableCellPressed(int row, int col);
 };
 
 #endif // MANUALMODETABUI_H

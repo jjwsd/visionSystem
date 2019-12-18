@@ -13,6 +13,13 @@ public:
 signals:
 
 public slots:
+    void cbDataConnectBtnClicked();
+    void cbDataReadBtnClicked();
+    void cbDataWriteBtnClicked();
+    void cbDataDisconnectBtnClicked();
+    void cbDataLibLoadUserModule();
+    void cbDataLibMakeUserModule();
+
 };
 
 #endif // DATAMODETABUI_H

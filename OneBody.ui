@@ -1353,7 +1353,7 @@ background-color: rgb(255, 255, 255);</string>
          <enum>QFrame::Box</enum>
         </property>
         <property name="currentIndex">
-         <number>3</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="page2">
          <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -1611,7 +1611,7 @@ SAVE</string>
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="inspLoadBtn">
+                <widget class="QPushButton" name="teachLoadBtn">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -2866,6 +2866,12 @@ color: rgb(255, 255, 255);</string>
                      </item>
                      <item>
                       <widget class="QLabel" name="label_48">
+                       <property name="maximumSize">
+                        <size>
+                         <width>16777215</width>
+                         <height>15</height>
+                        </size>
+                       </property>
                        <property name="styleSheet">
                         <string notr="true">color: rgb(0, 0, 0);</string>
                        </property>
@@ -3832,7 +3838,7 @@ color: rgb(255, 255, 255);</string>
                <item>
                 <layout class="QVBoxLayout" name="verticalLayout_2">
                  <item>
-                  <widget class="QPushButton" name="testLoadBtn">
+                  <widget class="QPushButton" name="manualLoadBtn">
                    <property name="minimumSize">
                     <size>
                      <width>100</width>
