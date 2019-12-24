@@ -1097,6 +1097,7 @@ void OneBody::initWorkerThreadConnect()
     m_uaWorker->moveToThread(&m_uaThread);
     connect(&m_uaThread, &QThread::finished, m_uaWorker, &QObject::deleteLater);
     connect(m_uaWorker, &UAWorker::send_event_by_polling, &m_AutoModeTab, &AutoModeTabUI::cbSWTriggerBtnClicked);
+    connect(m_ImgProcessWorker, &ImageProcessWorker::resultReady, m_uaWorker, &UAWorker::cbSendData);
     m_uaThread.start();
 }
 

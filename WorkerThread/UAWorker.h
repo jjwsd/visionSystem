@@ -26,7 +26,7 @@ signals:
 
 public slots:
     static void pollingCallback(UA_Server *server, void *data);
-    void cbSendData(double xPos, double Angle);
+    void cbSendData(_MatImg mat, CVisionAgentResult result);
     void startServerSeq();
 };
 

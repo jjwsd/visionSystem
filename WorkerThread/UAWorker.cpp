@@ -26,13 +26,18 @@ void UAWorker::pollingCallback(UA_Server *server, void *data)
            request = 0;
            response = 0;
         }
-    //}
+        //}
 }
 
-void UAWorker::cbSendData(double xPos, double Angle)
+void UAWorker::cbSendData(_MatImg mat, CVisionAgentResult result)
 {
+    m_pOpcua->ua_update_node_double("position_x",result.centerPt.x);
+    m_pOpcua->ua_update_node_double("position_y",result.centerPt.y);
+    m_pOpcua->ua_update_node_double("theta", result.dAngle);
 
+    m_pOpcua->ua_update_node_int32("trigger_response",1);
 }
+
 
 void UAWorker::startServerSeq()
 {
