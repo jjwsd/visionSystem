@@ -75,3 +75,13 @@ void DataModeTabUI::cbDataLibMakeUserModule()
     stream << "void OneBody::on_dataLibMakeModuleBtn_clicked()";
 }
 
+void DataModeTabUI::cbDataServerCreateBtn()
+{
+    m_MainWindow->m_uaWorker->startServerSeq();
+}
+
+void DataModeTabUI::cbDataServerDeleteBtn()
+{
+    m_MainWindow->g_opcUA.ua_server_stop();
+}
+

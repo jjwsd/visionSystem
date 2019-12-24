@@ -24,6 +24,7 @@
 
 #include <WorkerThread/ImageSaveWorker.h>
 #include <WorkerThread/ImageProcessWorker.h>
+#include <WorkerThread/UAWorker.h>
 
 #define shutterMax 2000000
 #define ShutterMin 500
@@ -66,7 +67,7 @@ OneBody::OneBody(QWidget *parent) :
     QObject::connect(ui->inspROICancelBtn,SIGNAL(clicked()),&m_TeachModeTab,SLOT(cbTeachROICancelBtnClicked()));
     QObject::connect(ui->inspAlgoCombo, SIGNAL(currentIndexChanged(int)), &m_TeachModeTab, SLOT(cbTeachSelectAlgoCombo(int)));
     QObject::connect(ui->inspPatternOKBtn,SIGNAL(clicked()),&m_TeachModeTab,SLOT(cbTeachPatternRectShowBtnClicked()));
-    QObject::connect(ui->teachTempSaveBtn,SIGNAL(clicked()),&m_TeachModeTab,SLOT(cbTeachPatternImageSaveBtnClicked();));
+    QObject::connect(ui->teachTempSaveBtn,SIGNAL(clicked()),&m_TeachModeTab,SLOT(cbTeachPatternImageSaveBtnClicked()));
     QObject::connect(ui->teachPatternResize, SIGNAL(textChanged(QString)), &m_TeachModeTab, SLOT(cbTeachPatternResizeValueChanged(QString)));
     QObject::connect(ui->teachCircleThreshLowSlider, SIGNAL(sliderPressed()), &m_TeachModeTab, SLOT(cbTeachThresholdSliderPressed()));
     QObject::connect(ui->teachCircleThreshLowSlider, SIGNAL(valueChanged(int)), &m_TeachModeTab, SLOT(cbTeachCircleThresholdLowSliderValueChanged(int)));
@@ -115,6 +116,8 @@ OneBody::OneBody(QWidget *parent) :
     QObject::connect(ui->dataDisconBtn, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataDisconnectBtnClicked()));
     QObject::connect(ui->dataLibLoadUserModule, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataLibLoadUserModule()));
     QObject::connect(ui->dataLibMakeUserModule, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataLibMakeUserModule()));
+    QObject::connect(ui->dataCreatetBtn, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataServerCreateBtn()));
+    QObject::connect(ui->dataDelete, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataServerDeleteBtn()));
 }
 
 OneBody::~OneBody()
@@ -1089,6 +1092,12 @@ void OneBody::initWorkerThreadConnect()
     connect(&m_logThread, &QThread::finished, Logworker, &QObject::deleteLater);
     connect(this, &OneBody::sigTestMSg, Logworker, &LogManagerWorker::saveLog);
     m_logThread.start();
+
+    m_uaWorker = new UAWorker();
+    m_uaWorker->moveToThread(&m_uaThread);
+    connect(&m_uaThread, &QThread::finished, m_uaWorker, &QObject::deleteLater);
+    connect(m_uaWorker, &UAWorker::send_event_by_polling, &m_AutoModeTab, &AutoModeTabUI::cbSWTriggerBtnClicked);
+    m_uaThread.start();
 }
 
 void OneBody::initTimer()

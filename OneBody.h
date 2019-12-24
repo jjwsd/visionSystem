@@ -21,6 +21,7 @@
 #include <VisionModule/CVisionModuleMgr.h>
 #include <WorkerThread/ImageProcessWorker.h>
 #include <logger.h>
+#include <WorkerThread/UAWorker.h>
 
 #include <UI/AutoModeTabUI.h>
 #include <UI/TeachModeTabUI.h>
@@ -31,6 +32,7 @@ class CameraData;
 class CModelData;
 class CXmlParser;
 class COpcUa;
+class UAWorker;
 
 namespace Ui {
 class OneBody;
@@ -76,6 +78,7 @@ private:
     QThread m_imgSaveThread;
     QThread m_imgProcThread;
     QThread m_logThread;
+    QThread m_uaThread;
 
     AutoModeTabUI m_AutoModeTab;
     TeachModeTabUI m_TeachModeTab;
@@ -171,6 +174,7 @@ signals:
     void sigSendTestMatImgToWorkerThread(_MatImg p);
 
     void sigTestMSg(const QtMsgType& type, const QString & tag, const QString & msg);
+    void sigCheckTriggerStart();
 
 private:
     void automode_triggerBtn_enable();
@@ -186,6 +190,7 @@ public:
     QRect m_Roi;
     bool m_bAutoModeStart = false;
     ImageProcessWorker * m_ImgProcessWorker;
+    UAWorker * m_uaWorker;
 
     void setCamStreamMode(CAM::CamStreamMode streamMode);
     bool grabQPixmap(QPixmap& image);

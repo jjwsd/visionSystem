@@ -82,6 +82,7 @@ void AutoModeTabUI::cbRunAutoModuleBtnClicked()
     {
         m_MainWindow->m_bAutoModeStart = true;
         m_MainWindow->m_ImgProcessWorker->m_pWorkerModule = m_MainWindow->m_cVisionModuleMgr.m_VisionModuleMap.begin()->second;
+        emit m_MainWindow->sigCheckTriggerStart();
     }
     else
     {

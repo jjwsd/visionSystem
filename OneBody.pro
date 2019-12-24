@@ -48,7 +48,8 @@ SOURCES += \
     UI/TabUI.cpp \
     UI/TeachModeTabUI.cpp \
     UI/ManualModeTabUI.cpp \
-    UI/DataModeTabUI.cpp
+    UI/DataModeTabUI.cpp \
+    WorkerThread/UAWorker.cpp
 
 HEADERS += \
         CXmlParser.h \
@@ -77,7 +78,8 @@ HEADERS += \
     UI/TabUI.h \
     UI/TeachModeTabUI.h \
     UI/ManualModeTabUI.h \
-    UI/DataModeTabUI.h
+    UI/DataModeTabUI.h \
+    WorkerThread/UAWorker.h
 
 FORMS += \
         OneBody.ui
