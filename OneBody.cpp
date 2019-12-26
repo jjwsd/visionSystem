@@ -869,13 +869,8 @@ void OneBody::cbAutoTabGetVisionProcessResult(_MatImg mat, CVisionAgentResult re
     if(result.bOk)
     {
         m_pTimerAutoMode->start(2500);
-        QImage img((uchar*)mat.data,
-                   mat.cols,
-                   mat.rows,
-                   QImage::Format_RGB888);
-
         m_MutexImg.lock();
-        m_Pixmap->setPixmap( QPixmap::fromImage(img));
+        m_Pixmap->setPixmap( CImageConverter::cvMatToQPixmap(mat));
         m_MutexImg.unlock();
         ui->graphicsView->scene()->setSceneRect(m_Pixmap->boundingRect());
         ui->graphicsView->fitInView(ui->graphicsView->scene()->sceneRect(), Qt::KeepAspectRatio);
@@ -948,18 +943,13 @@ void OneBody::cbTestTabGetVisionProcessResult(_MatImg mat, CVisionAgentResult re
         ui->testResultTable->setItem(iRowCount,2,tactTime);
 
         //cvtColor(mat, mat, CV_BGR2RGB);
-
-        QImage img((uchar*)mat.data,
-                   mat.cols,
-                   mat.rows,
-                   QImage::Format_RGB888);
+        QPixmap tmpPixmap = CImageConverter::cvMatToQPixmap(mat);
 
         m_MutexImg.lock();
-        m_Pixmap->setPixmap( QPixmap::fromImage(img));
+        m_Pixmap->setPixmap(tmpPixmap);
         m_MutexImg.unlock();
         ui->graphicsView->fitInView(ui->graphicsView->scene()->sceneRect(), Qt::KeepAspectRatio);
 
-        QPixmap tmpPixmap = QPixmap::fromImage(img);
         m_vTestTabImages.push_back(tmpPixmap);
     }
 }
@@ -1200,6 +1190,7 @@ bool OneBody::grabMat(Mat &matImg)
     matImg.create(data.uiHeight,data.uiWidth,CV_8UC(3));
     memcpy(matImg.data, data.pRGBBuf, data.uiHeight * data.uiWidth * 3);
     cv::flip(matImg, matImg, 0);
+    cv::cvtColor(matImg,matImg,CV_BGR2RGB);
 
     delete [] data.pRGBBuf;
     return bResult;
@@ -1255,6 +1246,7 @@ bool OneBody::grabMatByRoi(Mat &matImg, QRect &roi)
     cv::flip(matImg, matImg, 0);
 
     matImg = matImg(cv::Rect(roi.x(), roi.y(), roi.width(), roi.height()));
+    cv::cvtColor(matImg,matImg,CV_BGR2RGB);
 
     delete [] data.pRGBBuf;
     return bResult;
