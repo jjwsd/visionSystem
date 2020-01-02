@@ -496,8 +496,9 @@ void OneBody::pattern_matching()
 
     CVisionAgentResult visionResult;
 
-    m_cPatternModule.SetResizeRatio(g_iResizeRatio);
-    m_cPatternModule.InitPath(templateFolder, templateName);
+    //m_cPatternModule.SetResizeRatio(g_iResizeRatio);
+    m_cPatternModule.InitPath(templateFolder, templateName, 4);
+    // must be fixed by value!
 
     QFile file(testTemplatePath + QString(m_cPatternModule.GetContourName().c_str()));
     if(!file.exists())
@@ -615,8 +616,7 @@ void OneBody::load_model()
         QString testTemplatePath = QFileInfo(p_ModelData->m_qsTemplate).path();
         testTemplatePath += "/";
 
-        ui->teachPatternResize->setText(QString::number(p_ModelData->m_iResize));
-        g_iResizeRatio = p_ModelData->m_iResize;
+        ui->teachPatternResize->setText(QString::number(p_ModelData->m_iResize));        
 
         //ui->manualAlgoTab->setCurrentIndex(p_ModelData->m_iAlgoType);
         ui->inspAlgoCombo->setCurrentIndex(p_ModelData->m_iAlgoType);
@@ -637,8 +637,8 @@ void OneBody::load_model()
         CVisionAgentResult visionResult;
         std::vector<cv::String> filenames;
 
-        m_cPatternModule.SetResizeRatio(g_iResizeRatio);
-        m_cPatternModule.InitPath(templateFolder, templateName);
+        //m_cPatternModule.SetResizeRatio(g_iResizeRatio);
+        m_cPatternModule.InitPath(templateFolder, templateName, p_ModelData->m_iResize);
 
         m_Roi = QRect(p_ModelData->m_iStartX, p_ModelData->m_iStartY, p_ModelData->m_iEndX, p_ModelData->m_iEndY);
     }

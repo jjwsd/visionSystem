@@ -4,8 +4,9 @@
 using namespace std;
 
 enum MATCHING_RET {
-	SUCCESS = 0,
-	NO_TEMPLATE,
-	NOT_ENOUGH_MATCHES,
+        SUCCESS = 0,
+        NO_TEMPLATE,
+        NOT_ENOUGH_MATCHES,
+        NOT_ENOUGH_KEYPOINTS,
 };
 

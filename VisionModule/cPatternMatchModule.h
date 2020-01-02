@@ -2,7 +2,8 @@
 #define CPATTERNMATCHMODULE_H
 
 #include <VisionModule/CVisionModule.h>
-#include <patternMatch.h>
+//#include <patternMatch.h>
+#include <cmatchingapi.h>
 
 class CPatternMatchParams
 {
@@ -20,13 +21,13 @@ public:
     virtual CVisionAgentResult RunVision(cv::Mat srcImg, cv::Mat& dispImg);
     virtual std::string GetName();
 
-    void InitPath(cv::String tplFolder, cv::String templatePath);
+    void InitPath(cv::String tplFolder, cv::String templatePath, const int iResize);
     void SetResizeRatio(const int resizeRatio);
     void MakeNewTemplate(const int resizeRatio);
     std::string GetContourName() const;
 
 public:
-    PatternMatch m_Pattern;
+    CMatchingAPI m_Pattern;
     int         m_iResizeRatio;
     CPatternMatchParams m_Params;
 };

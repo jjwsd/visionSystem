@@ -42,8 +42,7 @@ void AutoModeTabUI::cbOpenAutoModuleBtnClicked()
                 cv::String templateName(testTemplate.toStdString());
 
                 CPatternMatchModule * pPatternMatch = new CPatternMatchModule();
-                pPatternMatch->SetResizeRatio(m_MainWindow->p_ModelData->m_iResize);
-                pPatternMatch->InitPath(templateFolder, templateName);
+                pPatternMatch->InitPath(templateFolder, templateName, m_MainWindow->p_ModelData->m_iResize);
 
                 m_MainWindow->m_cVisionModuleMgr.m_VisionModuleMap.insert(std::make_pair(i++, pPatternMatch));
             }

@@ -154,7 +154,7 @@ void TeachModeTabUI::cbTeachPatternImageSaveBtnClicked()
         cv::String tpl_folder(m_MainWindow->testTemplatePath.toStdString());
         cv::String template_name(m_MainWindow->testTemplate.toStdString());
 
-        m_MainWindow->m_cPatternModule.InitPath(tpl_folder, template_name);
+        m_MainWindow->m_cPatternModule.InitPath(tpl_folder, template_name, iResizeRatio);
 
         QFile file(m_MainWindow->testTemplatePath + QString(m_MainWindow->m_cPatternModule.GetContourName().c_str()));
         if(file.exists())

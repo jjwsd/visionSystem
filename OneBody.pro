@@ -132,6 +132,6 @@ unix{
     LIBS += "-L/usr/lib/" -lopencv_videostab
     LIBS += "-L/usr/local/lib" -lNeptuneAPI
     LIBS += "-L/usr/lib/aarch64-linux-gnu/" -lopen62541
-    LIBS += "-L/usr/local/lib" -lPatternMatch
+    LIBS += "-L/usr/local/lib" -lCMatchingAPI
     LIBS += -ldl
 }
