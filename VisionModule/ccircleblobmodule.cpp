@@ -14,8 +14,7 @@ CVisionAgentResult CCircleBlobModule::RunVision(Mat srcImg, Mat &dispImg)
     tmpResult = m_baseVision.FindHole_23GHousing(srcImg, dispImg, m_Param.iThresholdLow, m_Param.iThresholdHigh,
                                      iMinArea, iMaxArea);
 
-    result.centerPt.x = tmpResult.dX;
-    result.centerPt.y = tmpResult.dY;
+    result.SetCenterPoint(cv::Point2f(tmpResult.dX, tmpResult.dY));
     result.bOk = tmpResult.bIsOk;
     return result;
 }

@@ -114,7 +114,8 @@ OneBody::OneBody(QWidget *parent) :
     QObject::connect(ui->dataConnectBtn, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataConnectBtnClicked()));
     QObject::connect(ui->dataReadBtn, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataReadBtnClicked()));
     QObject::connect(ui->dataDisconBtn, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataDisconnectBtnClicked()));
-    QObject::connect(ui->dataLibLoadUserModule, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataLibLoadUserModule()));
+    //QObject::connect(ui->dataLibLoadUserModule, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataLibLoadUserModule()));
+    QObject::connect(ui->dataUserLibraryOpenBtn, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataLibLoadUserModule()));
     QObject::connect(ui->dataLibMakeUserModule, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataLibMakeUserModule()));
     QObject::connect(ui->dataCreatetBtn, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataServerCreateBtn()));
     QObject::connect(ui->dataDelete, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataServerDeleteBtn()));
@@ -561,10 +562,25 @@ void OneBody::pattern_matching()
 
         img_preprocess_t += (double)(end - start) / CLOCKS_PER_SEC;
 
-        QString strCPX = QString::number(visionResult.centerPt.x);
-        QString strCPY = QString::number(visionResult.centerPt.y);
+        cv::Point2f centerPt;
+        double dAngle;
+
+
+        if(!visionResult.GetCenterPoint(centerPt))
+        {
+            continue;
+        }
+
+        QString strCPX = QString::number(centerPt.x);
+        QString strCPY = QString::number(centerPt.y);
         QString strCP = strCPX + ", " + strCPY;
-        QString strAngle = QString::number(visionResult.dAngle* (180/3.14),'f',2);
+
+        if(!visionResult.GetAngle(dAngle))
+        {
+            continue;
+        }
+
+        QString strAngle = QString::number(dAngle* (180/3.14),'f',2);
         QString tt = QString::number(((double)(end - start) / CLOCKS_PER_SEC),'f',2);
 
         QTableWidgetItem *centerPoint = new QTableWidgetItem();
@@ -769,8 +785,15 @@ void OneBody::circle_algorithm()
                    dispImg.rows,
                    QImage::Format_RGB888);
 #endif
-        QString tmp = QString::number(visionResult.centerPt.x) + ", "
-                + QString::number(visionResult.centerPt.y);
+        cv::Point2f tmpCenterPt;
+        if(!visionResult.GetCenterPoint(tmpCenterPt))
+        {
+            continue;
+        }
+
+
+        QString tmp = QString::number(tmpCenterPt.x) + ", "
+                + QString::number(tmpCenterPt.y);
         centerPt->setText(tmp);
 
         if(visionResult.bOk == true)
@@ -875,9 +898,16 @@ void OneBody::cbAutoTabGetVisionProcessResult(_MatImg mat, CVisionAgentResult re
         ui->graphicsView->scene()->setSceneRect(m_Pixmap->boundingRect());
         ui->graphicsView->fitInView(ui->graphicsView->scene()->sceneRect(), Qt::KeepAspectRatio);
         //update result at table
-        QString strCPX = QString::number(result.centerPt.x);
-        QString strCPY = QString::number(result.centerPt.y);
-        QString strAngle = QString::number(result.dAngle* (180/3.14),'f',2);
+
+        cv::Point2f centerPt;
+        double dAngle;
+        if(!result.GetCenterPoint(centerPt) || !result.GetAngle(dAngle))
+        {
+
+        }
+        QString strCPX = QString::number(centerPt.x);
+        QString strCPY = QString::number(centerPt.y);
+        QString strAngle = QString::number(dAngle* (180/3.14),'f',2);
         QString strTT = QString::number(result.dTaktTime,'f',2);
         //QString strCP = strCPX + ", " + strCPY;
         QPixmap okimg;
@@ -923,10 +953,17 @@ void OneBody::cbTestTabGetVisionProcessResult(_MatImg mat, CVisionAgentResult re
     if(result.bOk)
     {
         //update result at table
-        QString strCPX = QString::number(result.centerPt.x);
-        QString strCPY = QString::number(result.centerPt.y);
+        cv::Point2f centerPt;
+        double dAngle;
+        if(!result.GetCenterPoint(centerPt) || !result.GetAngle(dAngle))
+        {
+            return;
+        }
+
+        QString strCPX = QString::number(centerPt.x);
+        QString strCPY = QString::number(centerPt.y);
         QString strCP = strCPX + ", " + strCPY;
-        QString strAngle = QString::number(result.dAngle* (180/3.14),'f',2);
+        QString strAngle = QString::number(dAngle* (180/3.14),'f',2);
         QString tt = QString::number(result.dTaktTime,'f',2);
 
         QTableWidgetItem *centerPoint = new QTableWidgetItem();
@@ -1456,18 +1493,41 @@ void OneBody::logtabComboBoxSelected(int item)
         QTableWidgetItem * newItem3;
         QTableWidgetItem * newItem4;
 
+        cv::Point2f centerPt;
+        double dAngle;
+        QString tempStr;
+        QString tempStr2;
+
         foreach (CVisionAgentResult v, m_lAutoVisionResult)
         {
             if(v.bOk)
             {
                 newItem1 = pTemp->clone();
-                newItem1->setText(QString::number(v.centerPt.x,'f',2));
-
                 newItem2 = pTemp->clone();
-                newItem2->setText(QString::number(v.centerPt.y,'f',2));
+                if(v.GetCenterPoint(centerPt))
+                {
+                    tempStr = QString::number(centerPt.x,'f',2);
+                    tempStr2 = QString::number(centerPt.y,'f',2);
+                }
+                else
+                {
+                    tempStr = "X";
+                    tempStr2 = "X";
+                }
+                newItem1->setText(tempStr);
+                newItem2->setText(tempStr2);
 
                 newItem3 = pTemp->clone();
-                newItem3->setText(QString::number(v.dAngle,'f',2));
+                if(v.GetAngle(dAngle))
+                {
+                    tempStr = QString::number(dAngle,'f',2);
+                }
+                else
+                {
+                    tempStr = "X";
+                }
+
+                newItem3->setText(tempStr);
 
                 newItem4 = pTemp->clone();
                 newItem4->setText(QString::number(v.dTaktTime,'f',2));

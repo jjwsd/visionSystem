@@ -114,7 +114,7 @@ CVisionAgentResult CCircleModule::RunVision(Mat srcImg, Mat& dispImg)
         cv::line(dispImg, Point((int)tempCenter.x, (int)tempCenter.y - 10), Point((int)tempCenter.x, (int)tempCenter.y + 10), CV_RGB(0, 255, 0), 5);
     }
 
-    result.centerPt = cv::Point(tempCenter.x, tempCenter.y);
+    result.SetCenterPoint(cv::Point2f(tempCenter.x, tempCenter.y));
     result.bOk = bIsOk;
     return result;
 }

@@ -812,6 +812,11 @@ border-radius: 5px;</string>
                 <string>OPC UA</string>
                </property>
               </item>
+              <item>
+               <property name="text">
+                <string>User Library</string>
+               </property>
+              </item>
              </widget>
             </item>
             <item>
@@ -821,6 +826,9 @@ border-radius: 5px;</string>
 border-width: 1px;
 border-color: lightgray;
 border-style: solid;</string>
+              </property>
+              <property name="currentIndex">
+               <number>4</number>
               </property>
               <widget class="QWidget" name="data_1">
                <layout class="QHBoxLayout" name="horizontalLayout_66">
@@ -1221,6 +1229,33 @@ border-style: solid;</string>
                  </widget>
                 </item>
                </layout>
+              </widget>
+              <widget class="QWidget" name="UserLibrary">
+               <property name="maximumSize">
+                <size>
+                 <width>1490</width>
+                 <height>1079</height>
+                </size>
+               </property>
+               <widget class="QWidget" name="verticalLayoutWidget">
+                <property name="geometry">
+                 <rect>
+                  <x>9</x>
+                  <y>-1</y>
+                  <width>1481</width>
+                  <height>711</height>
+                 </rect>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_14">
+                 <item>
+                  <widget class="QPushButton" name="dataUserLibraryOpenBtn">
+                   <property name="text">
+                    <string>PushButton</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
               </widget>
              </widget>
             </item>

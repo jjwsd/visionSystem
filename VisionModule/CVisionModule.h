@@ -18,31 +18,65 @@ enum VisionType{
 class CVisionAgentResult
 {
 public:
-    CVisionAgentResult():centerPt(0,0),iOccurrence(0),bOk(false),m_lStatus(0),dTaktTime(0.0){}
+    CVisionAgentResult():m_CenterPt(0,0),iOccurrence(0),bOk(false),m_lStatus(0),dTaktTime(0.0){}
     enum status{
         CENTER_PT =0,
         ANGLE     =1,
         EXISTENCE =2,
     };
 
-    cv::Point2f centerPt;
-    double    dAngle;
+    void SetCenterPoint(cv::Point2f centerPt);
+    bool GetCenterPoint(cv::Point2f &centerPt);
+
+    void SetAngle(double dAngle);
+    bool GetAngle(double &dAngle);
+
     bool      bExistence;
     int       iOccurrence;
     bool      bOk;
     double    dTaktTime;
 
 private:
+    bool        m_bUseCenterPoint;
+    cv::Point2f m_CenterPt;
+
+    bool        m_bUseAngle;
+    double    m_dAngle;
+
     unsigned long m_lStatus;
 
 };
+
+inline void CVisionAgentResult::SetCenterPoint(cv::Point2f centerPt)
+{
+    m_bUseCenterPoint = true;
+    m_CenterPt = centerPt;
+}
+
+inline void CVisionAgentResult::SetAngle(double dAngle)
+{
+    m_bUseAngle = true;
+    m_dAngle = dAngle;
+}
+
+inline bool CVisionAgentResult::GetCenterPoint(cv::Point2f &centerPt)
+{
+    centerPt = m_CenterPt;
+    return m_bUseCenterPoint;
+}
+
+inline bool CVisionAgentResult::GetAngle(double &dAngle)
+{
+    dAngle = m_dAngle;
+    return m_bUseAngle;
+}
 
 class CVisionModule
 {
 public:
     CVisionModule():m_bDebugMode(false),m_eVisionType(VISION::PATTERN) {}
-    virtual CVisionAgentResult RunVision(cv::Mat srcImg, cv::Mat& dispImg) =0;
-    virtual std::string GetName() =0;
+    virtual CVisionAgentResult RunVision(cv::Mat srcImg, cv::Mat& dispImg) =0;    
+    virtual std::string GetName() =0;    
 
 protected:
     CImageProcess   m_baseVision;

@@ -9,10 +9,15 @@ CPatternMatchModule::CPatternMatchModule()
 CVisionAgentResult CPatternMatchModule::RunVision(Mat srcImg, Mat &dispImg)
 {
     CVisionAgentResult tempResult;
+    Point2f tempCenterPt;
+    double  dTempAngle;
     if(m_Pattern.doCore(srcImg, false) == SUCCESS)
-    {
+    {        
+        m_Pattern.getResult(dispImg, tempCenterPt, dTempAngle);
+
         tempResult.bOk = true;
-        m_Pattern.getResult(dispImg, tempResult.centerPt, tempResult.dAngle);        
+        tempResult.SetCenterPoint(tempCenterPt);
+        tempResult.SetAngle(dTempAngle);
     }
     return tempResult;
 }
