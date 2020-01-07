@@ -41,6 +41,7 @@ public slots:
 
 private:
     CDragBox * m_PatternRect;
+    CDragBox * m_RoiRect;
 
 };
 

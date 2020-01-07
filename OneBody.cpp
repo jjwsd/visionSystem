@@ -269,10 +269,10 @@ void OneBody::load_settings()
     ui->settingOffsetXSlider->setMaximum(0);
     ui->settingOffsetYSlider->setMaximum(0);
 
-//    m_CamSizeInfo.width = 1944;
-//    m_CamSizeInfo.height = 2264;
-//    m_CamSizeInfo.x = 1880;
-//    m_CamSizeInfo.y = 792;
+    //    m_CamSizeInfo.width = 1944;
+    //    m_CamSizeInfo.height = 2264;
+    //    m_CamSizeInfo.x = 1880;
+    //    m_CamSizeInfo.y = 792;
 
     m_CamSizeInfo.width = 5184;
     m_CamSizeInfo.height = 3888;
@@ -616,7 +616,7 @@ void OneBody::load_model()
         QString testTemplatePath = QFileInfo(p_ModelData->m_qsTemplate).path();
         testTemplatePath += "/";
 
-        ui->teachPatternResize->setText(QString::number(p_ModelData->m_iResize));        
+        ui->teachPatternResize->setText(QString::number(p_ModelData->m_iResize));
 
         //ui->manualAlgoTab->setCurrentIndex(p_ModelData->m_iAlgoType);
         ui->inspAlgoCombo->setCurrentIndex(p_ModelData->m_iAlgoType);
@@ -1385,14 +1385,9 @@ void OneBody::cbUpdateMainViewer(QPixmap img)
     m_Pixmap->setPixmap( img );
     m_MutexImg.unlock();
 
-    //if(pFrameData->m_iFrameCnt >= 3 && pFrameData->m_iFrameCnt <= 6)
-    {
-        ui->graphicsView->scene()->setSceneRect(m_Pixmap->boundingRect());
-        ui->graphicsView->fitInView(ui->graphicsView->scene()->sceneRect(), Qt::KeepAspectRatio);
-        //        ui->graphicsView->setTransform(QTransform());
-        //        ui->graphicsView->scene()->update();
-        //        ui->graphicsView->fitInView(ui->graphicsView->scene()->sceneRect(), Qt::KeepAspectRatio);
-    }
+    ui->graphicsView->scene()->setSceneRect(m_Pixmap->boundingRect());
+    ui->graphicsView->fitInView(ui->graphicsView->scene()->sceneRect(), Qt::KeepAspectRatio);
+
 }
 
 void OneBody::cbUpdateAutoModeImage()

@@ -10,7 +10,8 @@
 
 int iResizeRatio = 4;
 
-TeachModeTabUI::TeachModeTabUI(QObject *parent) : QObject(parent), m_PatternRect(nullptr)
+TeachModeTabUI::TeachModeTabUI(QObject *parent) : QObject(parent), m_PatternRect(nullptr),
+    m_RoiRect(nullptr)
 {
 
 }
@@ -58,6 +59,7 @@ void TeachModeTabUI::cbTeachImageLoadBtnClicked()
 
 void TeachModeTabUI::cbTeachROIShowBtnClicked()
 {
+#if 1
     NeptuneGetSizeInfo(m_MainWindow->m_CamHandle, &m_MainWindow->m_CamSizeInfo);
 
     int sizeWidth = m_MainWindow->m_CamSizeInfo.width, sizeHeight = m_MainWindow->m_CamSizeInfo.height;
@@ -73,10 +75,33 @@ void TeachModeTabUI::cbTeachROIShowBtnClicked()
         ui->graphicsView->scene()->addItem(m_MainWindow->m_pRectRoi);
         m_MainWindow->m_pRectRoi->show();
     }
+#else
+    int sizeWidth = 0;
+    int sizeHeight = 0;
+    if(m_MainWindow->m_Pixmap != nullptr)
+    {
+        sizeWidth = m_MainWindow->m_Pixmap->boundingRect().width();
+        sizeHeight= m_MainWindow->m_Pixmap->boundingRect().height();
+    }
+
+    if(sizeWidth <=0 || sizeHeight <= 0 )
+    {
+        qWarning() << "main view pixmap is null!";
+        return;
+    }
+
+    if(m_RoiRect == nullptr)
+    {
+        m_RoiRect = new CDragBox(sizeWidth/4, sizeHeight/4, Qt::red, QPoint(sizeWidth, sizeHeight));
+        m_RoiRect->setPos(0,0);
+        ui->graphicsView->scene()->addItem(m_RoiRect);
+    }
+#endif
 }
 
 void TeachModeTabUI::cbTeachROICancelBtnClicked()
 {
+#if 1
     if(m_MainWindow->m_pRectRoi != nullptr)
     {
         qDebug() << "!pRectROI->IsEmpty()";
@@ -89,6 +114,18 @@ void TeachModeTabUI::cbTeachROICancelBtnClicked()
     {
         qDebug() << "pRectROI->IsEmpty()";
     }
+#else
+    if(m_RoiRect != nullptr)
+    {
+        ui->graphicsView->scene()->removeItem(m_RoiRect);
+        delete m_RoiRect;
+        m_RoiRect = nullptr;
+    }
+    else
+    {
+        qDebug() << "pRectROI->IsEmpty()";
+    }
+#endif
 }
 
 void TeachModeTabUI::cbTeachSelectAlgoCombo(int value)
@@ -117,7 +154,7 @@ void TeachModeTabUI::cbTeachPatternRectShowBtnClicked()
 
     if(m_PatternRect == nullptr)
     {
-        m_PatternRect = new CDragBox(sizeWidth/4, sizeHeight/4, Qt::red, QPoint(sizeWidth, sizeHeight));
+        m_PatternRect = new CDragBox(sizeWidth/4, sizeHeight/4, Qt::green, QPoint(sizeWidth, sizeHeight));
         m_PatternRect->setPos(0,0);
         ui->graphicsView->scene()->addItem(m_PatternRect);
     }
