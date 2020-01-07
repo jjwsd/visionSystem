@@ -49,7 +49,9 @@ SOURCES += \
     UI/TeachModeTabUI.cpp \
     UI/ManualModeTabUI.cpp \
     UI/DataModeTabUI.cpp \
-    WorkerThread/UAWorker.cpp
+    WorkerThread/UAWorker.cpp \    
+    Utility/dragbox.cpp \
+    Utility/cornergrabber.cpp
 
 HEADERS += \
         CXmlParser.h \
@@ -79,7 +81,9 @@ HEADERS += \
     UI/TeachModeTabUI.h \
     UI/ManualModeTabUI.h \
     UI/DataModeTabUI.h \
-    WorkerThread/UAWorker.h
+    WorkerThread/UAWorker.h \    
+    Utility/dragbox.h \
+    Utility/cornergrabber.h
 
 FORMS += \
         OneBody.ui

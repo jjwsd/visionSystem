@@ -218,7 +218,7 @@ public:
     int m_iHighValue;
 
     UserRectItem * m_pRectRoi;
-    UserRectItem * pRectModel;
+    //UserRectItem * pRectModel;
     UserRectItem * pRect;
 
 

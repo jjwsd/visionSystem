@@ -10,7 +10,7 @@
 
 int iResizeRatio = 4;
 
-TeachModeTabUI::TeachModeTabUI(QObject *parent) : QObject(parent)
+TeachModeTabUI::TeachModeTabUI(QObject *parent) : QObject(parent), m_PatternRect(nullptr)
 {
 
 }
@@ -43,8 +43,8 @@ void TeachModeTabUI::cbTeachImageLoadBtnClicked()
     QPixmap temp;
     m_MainWindow->inspLoadfileName.clear();
     m_MainWindow->inspLoadfileName = QFileDialog::getOpenFileName(m_MainWindow, tr("Load Image"),
-                                                    "/home/nvidia/Pictures",
-                                                    tr("Image File(*.png *.bmp *.jpg)"));
+                                                                  "/home/nvidia/Pictures",
+                                                                  tr("Image File(*.png *.bmp *.jpg)"));
     if (m_MainWindow->inspLoadfileName.isEmpty())
         return;
     temp.load(m_MainWindow->inspLoadfileName);
@@ -97,30 +97,38 @@ void TeachModeTabUI::cbTeachSelectAlgoCombo(int value)
     m_MainWindow->p_ModelData->m_iAlgoType = value;
 }
 
+#include <Utility/dragbox.h>
+
 void TeachModeTabUI::cbTeachPatternRectShowBtnClicked()
 {
-    NeptuneGetSizeInfo(m_MainWindow->m_CamHandle, &m_MainWindow->m_CamSizeInfo);
-    int sizeWidth = m_MainWindow->m_CamSizeInfo.width, sizeHeight=m_MainWindow->m_CamSizeInfo.height;
-    QRectF roiRect(sizeWidth/4, sizeHeight/4, (sizeWidth-sizeWidth/2), (sizeHeight-sizeHeight/2));
-
-    if(m_MainWindow->pRectModel == nullptr)
+    int sizeWidth = 0;
+    int sizeHeight = 0;
+    if(m_MainWindow->m_Pixmap != nullptr)
     {
-        m_MainWindow->pRectModel = new UserRectItem();
-        qDebug() << "rectRoi = " << m_MainWindow->pRectModel->rect().left();
-        m_MainWindow->pRectModel->setRect(roiRect);
-        m_MainWindow->pRectModel->SetLineColor(Qt::magenta);
-        m_MainWindow->pRectModel->setFlag(QGraphicsItem::ItemIsMovable);
-        ui->graphicsView->scene()->addItem(m_MainWindow->pRectModel);
-        m_MainWindow->pRectModel->show();
+        sizeWidth = m_MainWindow->m_Pixmap->boundingRect().width();
+        sizeHeight= m_MainWindow->m_Pixmap->boundingRect().height();
+    }
+
+    if(sizeWidth <=0 || sizeHeight <= 0 )
+    {
+        qWarning() << "main view pixmap is null!";
+        return;
+    }
+
+    if(m_PatternRect == nullptr)
+    {
+        m_PatternRect = new CDragBox(sizeWidth/4, sizeHeight/4, Qt::red, QPoint(sizeWidth, sizeHeight));
+        m_PatternRect->setPos(0,0);
+        ui->graphicsView->scene()->addItem(m_PatternRect);
     }
 }
 
 void TeachModeTabUI::cbTeachPatternImageSaveBtnClicked()
 {
     QPixmap temp;
-    if(m_MainWindow->pRectModel != nullptr)
+    if(m_PatternRect != nullptr)
     {
-        temp = m_MainWindow->m_Pixmap->pixmap().copy(m_MainWindow->pRectModel->getRectPosBySceneCoord().toRect());
+        temp = m_MainWindow->m_Pixmap->pixmap().copy(m_PatternRect->getRectPosBySceneCoord().toRect());
 
         QString fileName = QFileDialog::getSaveFileName(m_MainWindow, tr("Save Image"),
                                                         "/home/nvidia/Pictures",
@@ -174,14 +182,12 @@ void TeachModeTabUI::cbTeachPatternImageSaveBtnClicked()
         QMessageBox::information(m_MainWindow, tr("information"), "Check Pattern Area", QMessageBox::Close);
         return;
     }
-    if(m_MainWindow->pRectModel != nullptr)
-    {
-        qDebug() << "!pRectModel->IsEmpty()";
-        ui->graphicsView->scene()->removeItem(m_MainWindow->pRectModel);
-        //ui->graphicsView->scene()->removeItem(pRectModel);
 
-        delete m_MainWindow->pRectModel;
-        m_MainWindow->pRectModel = nullptr;
+    if(m_PatternRect != nullptr)
+    {
+        ui->graphicsView->scene()->removeItem(m_PatternRect);
+        delete m_PatternRect;
+        m_PatternRect = nullptr;
     }
 }
 

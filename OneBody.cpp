@@ -39,7 +39,7 @@ CAM::CamStreamMode   OneBody::m_eCamStreamMode = CAM::LIVE_STREAM;
 
 OneBody::OneBody(QWidget *parent) :
     QMainWindow(parent, Qt::FramelessWindowHint),
-    ui(new Ui::OneBody), m_pRectRoi(nullptr), pRectModel(nullptr), pRect(nullptr)
+    ui(new Ui::OneBody), m_pRectRoi(nullptr), pRect(nullptr)
 {
     ui->setupUi(this);
 
@@ -1042,7 +1042,8 @@ void OneBody::init_graphics_view()
 
     ui->graphicsView->setScene(new QGraphicsScene(this));
     ui->graphicsView->scene()->addItem(m_Pixmap);
-    ui->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag);
+    //ui->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag);
+    ui->graphicsView->setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
 
     m_FrameData = new CameraData();
     m_FrameData->m_pMainWindow = this;

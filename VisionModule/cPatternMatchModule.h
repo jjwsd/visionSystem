@@ -2,7 +2,6 @@
 #define CPATTERNMATCHMODULE_H
 
 #include <VisionModule/CVisionModule.h>
-//#include <patternMatch.h>
 #include <cmatchingapi.h>
 
 class CPatternMatchParams

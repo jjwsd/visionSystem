@@ -4,6 +4,7 @@
 #include <QObject>
 #include <UI/TabUI.h>
 #include <Data/definedata.h>
+#include <Utility/dragbox.h>
 
 class TeachModeTabUI : public QObject, public TabUI
 {
@@ -37,6 +38,9 @@ public slots:
     void cbTeachModelLoadBtnClicked();
     void cbTeachModelTestBtnClicked();
     void cbTeachSettingBtnClicked();
+
+private:
+    CDragBox * m_PatternRect;
 
 };
 
