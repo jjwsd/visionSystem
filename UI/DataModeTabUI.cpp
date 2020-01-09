@@ -55,7 +55,6 @@ void DataModeTabUI::cbDataLibLoadUserModule()
         return;
     }
 
-    //void * libHandle = dlopen("/home/nvidia/QT_Project/abcChild/libabc2.so", RTLD_LAZY);
     void * libHandle = dlopen(soFileName.toStdString().c_str(), RTLD_LAZY);
     if(libHandle  == NULL)
     {
@@ -64,27 +63,21 @@ void DataModeTabUI::cbDataLibLoadUserModule()
         return;
     }
 
-#if 1
     CVisionModule* (*creator)() = (CVisionModule*(*)())dlsym(libHandle, "create");
     CVisionModule* p = (*creator)();
+
+    QString tmpName = p->GetName().c_str();
+    ui->lbGetNameCheck->setStyleSheet("QLabel { background-color : red; color : white; }");
+    ui->lbGetNameCheck->setText(QString(tmpName));
+
     p->TestName();
     cv::Mat temp;
     p->RunVision(temp,temp);
-    p->GetName();
 
     void (*destructor)(CVisionModule*) = (void(*)(CVisionModule*))dlsym(libHandle, "destroy");
     (*destructor)(p);
     std::cout << "(*destructor)(p)";
     dlclose(libHandle);
-#else
-    ABC* (*creator)() = (ABC*(*)())dlsym(libHandle, "create");
-    ABC* p = (*creator)();
-    p->show_message();
-
-    void (*destructor)(ABC*) = (void(*)(ABC*))dlsym(libHandle, "destroy");
-    (*destructor)(p);
-    dlclose(libHandle);
-#endif
 }
 
 #include <QCoreApplication>
