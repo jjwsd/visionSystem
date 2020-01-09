@@ -2,8 +2,13 @@
 
 CPatternMatchModule::CPatternMatchModule()
 {
-    this->m_eVisionType = VISION::PATTERN;
+    //this->m_eVisionType = VISION::PATTERN;
     m_iResizeRatio = 4;
+}
+
+CPatternMatchModule::~CPatternMatchModule()
+{
+
 }
 
 CVisionAgentResult CPatternMatchModule::RunVision(Mat srcImg, Mat &dispImg)
@@ -25,6 +30,11 @@ CVisionAgentResult CPatternMatchModule::RunVision(Mat srcImg, Mat &dispImg)
 string CPatternMatchModule::GetName()
 {
     return "PatternMatch";
+}
+
+void CPatternMatchModule::TestName()
+{
+
 }
 
 void CPatternMatchModule::InitPath(cv::String tplFolder, cv::String templatePath, const int iResize)

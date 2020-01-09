@@ -4,7 +4,12 @@
 
 CCircleModule::CCircleModule()
 {
-    this->m_eVisionType = VISION::CIRCLE;
+    //this->m_eVisionType = VISION::CIRCLE;
+}
+
+CCircleModule::~CCircleModule()
+{
+
 }
 
 CVisionAgentResult CCircleModule::RunVision(Mat srcImg, Mat& dispImg)
@@ -122,6 +127,11 @@ CVisionAgentResult CCircleModule::RunVision(Mat srcImg, Mat& dispImg)
 string CCircleModule::GetName()
 {
     return "CircleFinder";
+}
+
+void CCircleModule::TestName()
+{
+
 }
 
 void CCircleModule::SetParams(CCircleParams params)

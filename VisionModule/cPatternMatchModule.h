@@ -17,8 +17,10 @@ class CPatternMatchModule : public CVisionModule
 {
 public:
     CPatternMatchModule();
+    virtual ~CPatternMatchModule();
     virtual CVisionAgentResult RunVision(cv::Mat srcImg, cv::Mat& dispImg);
     virtual std::string GetName();
+    virtual void TestName();
 
     void InitPath(cv::String tplFolder, cv::String templatePath, const int iResize);
     void SetResizeRatio(const int resizeRatio);

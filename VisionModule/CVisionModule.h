@@ -1,8 +1,6 @@
 #ifndef CVISIONMODULE_H
 #define CVISIONMODULE_H
 
-#include <S_Vision/CImageProcess.h>
-
 #include <opencv2/core/mat.hpp>
 #include <opencv2/core/types.hpp>
 
@@ -18,7 +16,8 @@ enum VisionType{
 class CVisionAgentResult
 {
 public:
-    CVisionAgentResult():m_CenterPt(0,0),iOccurrence(0),bOk(false),m_lStatus(0),dTaktTime(0.0){}
+    CVisionAgentResult():iOccurrence(0),bOk(false),dTaktTime(0.0),m_bUseCenterPoint(0),
+        m_CenterPt(0,0),m_bUseAngle(0),m_lStatus(0){}
     enum status{
         CENTER_PT =0,
         ANGLE     =1,
@@ -74,12 +73,11 @@ inline bool CVisionAgentResult::GetAngle(double &dAngle)
 class CVisionModule
 {
 public:
-    CVisionModule():m_bDebugMode(false),m_eVisionType(VISION::PATTERN) {}
-    virtual CVisionAgentResult RunVision(cv::Mat srcImg, cv::Mat& dispImg) =0;    
-    virtual std::string GetName() =0;    
-
-protected:
-    CImageProcess   m_baseVision;
+    CVisionModule(){};
+    virtual ~CVisionModule(){}
+    virtual void TestName() = 0;
+    virtual CVisionAgentResult RunVision(cv::Mat srcImg, cv::Mat& dispImg) =0;
+    virtual std::string GetName() =0;
 
 public:
     bool            m_bDebugMode;

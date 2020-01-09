@@ -1,6 +1,7 @@
 #ifndef CCIRCLEMODULE_H
 #define CCIRCLEMODULE_H
 
+#include <S_Vision/CImageProcess.h>
 #include <VisionModule/CVisionModule.h>
 
 class CCircleParams
@@ -23,11 +24,14 @@ class CCircleModule : public CVisionModule
 {
 public:
     CCircleModule();
+    virtual ~CCircleModule();
     virtual CVisionAgentResult RunVision(Mat srcImg, Mat& dispImg);
     virtual std::string GetName();
+    virtual void TestName();
 
     CCircleParams m_Param;
     void SetParams(CCircleParams params);
+    CImageProcess   m_baseVision;
 
 };
 

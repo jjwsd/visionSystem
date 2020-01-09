@@ -1,6 +1,7 @@
 #ifndef CCIRCLEBLOBMODULE_H
 #define CCIRCLEBLOBMODULE_H
 
+#include <S_Vision/CImageProcess.h>
 #include <VisionModule/CVisionModule.h>
 
 class CCircleBlobParams
@@ -21,11 +22,13 @@ class CCircleBlobModule : public CVisionModule
 {
 public:
     CCircleBlobModule();
-
+    virtual ~CCircleBlobModule();
     virtual CVisionAgentResult RunVision(Mat srcImg, Mat& dispImg);
     virtual std::string GetName();
+    virtual void TestName();
 
     CCircleBlobParams m_Param;
+    CImageProcess   m_baseVision;
     void SetParams(CCircleBlobParams params);
 };
 

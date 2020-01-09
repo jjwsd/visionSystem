@@ -2,6 +2,7 @@
 #include "ui_OneBody.h"
 #include "OneBody.h"
 #include <S_Vision/CImageConverter.h>
+#include <S_Vision/CImageProcess.h>
 
 #include <QFileDialog>
 #include <QDir>

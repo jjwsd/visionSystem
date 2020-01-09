@@ -33,8 +33,6 @@ SOURCES += \
     S_Vision/CImageConverter.cpp \
     S_Vision/CImageProcess.cpp \
     VisionModule/CVisionCommon.cpp \
-    VisionModule/CVisionAgent.cpp \
-    VisionModule/CVisionModule.cpp \
     VisionModule/ccirclemodule.cpp \
     VisionModule/cPatternMatchModule.cpp \
     COpcUa.cpp \
@@ -62,7 +60,6 @@ HEADERS += \
     S_Vision/CImageConverter.h \
     S_Vision/CImageProcess.h \
     VisionModule/CVisionCommon.h \
-    VisionModule/CVisionAgent.h \
     VisionModule/CVisionModule.h \
     VisionModule/ccirclemodule.h \
     VisionModule/cPatternMatchModule.h \

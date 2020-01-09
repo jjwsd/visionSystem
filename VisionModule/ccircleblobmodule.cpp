@@ -5,6 +5,11 @@ CCircleBlobModule::CCircleBlobModule()
 
 }
 
+CCircleBlobModule::~CCircleBlobModule()
+{
+
+}
+
 CVisionAgentResult CCircleBlobModule::RunVision(Mat srcImg, Mat &dispImg)
 {
     CVisionAgentResult result;
@@ -22,6 +27,11 @@ CVisionAgentResult CCircleBlobModule::RunVision(Mat srcImg, Mat &dispImg)
 string CCircleBlobModule::GetName()
 {
     return "CircleBlobFinder";
+}
+
+void CCircleBlobModule::TestName()
+{
+
 }
 
 void CCircleBlobModule::SetParams(CCircleBlobParams params)
