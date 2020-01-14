@@ -17,6 +17,7 @@ CModelData::CModelData()
     m_iStartY=0;
     m_iEndX=0;
     m_iEndY=0;
+    m_iMatchRate=0;
 }
 
 void CModelData::init()
@@ -36,5 +37,6 @@ void CModelData::init()
     m_iStartY=0;
     m_iEndX=0;
     m_iEndY=0;
+    m_iMatchRate=0;
 }
 

@@ -49,7 +49,9 @@ SOURCES += \
     UI/DataModeTabUI.cpp \
     WorkerThread/UAWorker.cpp \    
     Utility/dragbox.cpp \
-    Utility/cornergrabber.cpp
+    Utility/cornergrabber.cpp \
+    jetsonGPIO.c \
+    WorkerThread/IOWorker.cpp
 
 HEADERS += \
         CXmlParser.h \
@@ -80,7 +82,9 @@ HEADERS += \
     UI/DataModeTabUI.h \
     WorkerThread/UAWorker.h \    
     Utility/dragbox.h \
-    Utility/cornergrabber.h
+    Utility/cornergrabber.h \
+    jetsonGPIO.h \
+    WorkerThread/IOWorker.h
 
 FORMS += \
         OneBody.ui

@@ -28,21 +28,21 @@ void AutoModeTabUI::cbOpenAutoModuleBtnClicked()
         for (constIterator = fileNames.constBegin(); constIterator != fileNames.constEnd();++constIterator)
         {
             xmlName = (*constIterator).toLocal8Bit().constData();
-            m_MainWindow->xml.openXmlFile(xmlName, m_MainWindow->p_ModelData);
+            m_MainWindow->xml.openXmlFile(xmlName, &m_ModelData);
 
-            m_MainWindow->m_Roi = QRect(m_MainWindow->p_ModelData->m_iStartX, m_MainWindow->p_ModelData->m_iStartY, m_MainWindow->p_ModelData->m_iEndX, m_MainWindow->p_ModelData->m_iEndY);
+            m_MainWindow->m_Roi = QRect(m_ModelData.m_iStartX, m_ModelData.m_iStartY, m_ModelData.m_iEndX, m_ModelData.m_iEndY);
 
-            if(m_MainWindow->p_ModelData->m_iAlgoType == VISION::PATTERN)
+            if(m_ModelData.m_iAlgoType == VISION::PATTERN)
             {
-                QString testTemplate = QFileInfo(m_MainWindow->p_ModelData->m_qsTemplate).fileName();
-                QString testTemplatePath = QFileInfo(m_MainWindow->p_ModelData->m_qsTemplate).path();
+                QString testTemplate = QFileInfo(m_ModelData.m_qsTemplate).fileName();
+                QString testTemplatePath = QFileInfo(m_ModelData.m_qsTemplate).path();
                 testTemplatePath += "/";
 
                 cv::String templateFolder(testTemplatePath.toStdString());
                 cv::String templateName(testTemplate.toStdString());
 
                 CPatternMatchModule * pPatternMatch = new CPatternMatchModule();
-                pPatternMatch->InitPath(templateFolder, templateName, m_MainWindow->p_ModelData->m_iResize);
+                pPatternMatch->InitPath(templateFolder, templateName, m_ModelData.m_iResize);
 
                 m_MainWindow->m_cVisionModuleMgr.m_VisionModuleMap.insert(std::make_pair(i++, pPatternMatch));
             }
@@ -50,8 +50,8 @@ void AutoModeTabUI::cbOpenAutoModuleBtnClicked()
     }
     QPixmap pixmap;
     QPixmap canny;
-    QString tempPath = QFileInfo(m_MainWindow->p_ModelData->m_qsTemplate).path();
-    pixmap.load(m_MainWindow->p_ModelData->m_qsTemplate);
+    QString tempPath = QFileInfo(m_ModelData.m_qsTemplate).path();
+    pixmap.load(m_ModelData.m_qsTemplate);
     canny.load(tempPath + QString("/contour_def_canny_totally.bmp"));
 
     ui->manualPatternImage->setPixmap(pixmap);

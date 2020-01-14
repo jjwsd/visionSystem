@@ -50,7 +50,7 @@ OneBody::OneBody(QWidget *parent) :
     initDataTab();
     initLogTab();
     load_settings();
-    p_ModelData = new CModelData;
+    //p_ModelData = new CModelData;
 
     // auto Mode
     QObject::connect(ui->autoBtnOpenVisionModule,SIGNAL(clicked()),&m_AutoModeTab,SLOT(cbOpenAutoModuleBtnClicked()));
@@ -87,6 +87,7 @@ OneBody::OneBody(QWidget *parent) :
     QObject::connect(ui->teachModelTestBtn, SIGNAL(clicked()), &m_TeachModeTab, SLOT(cbTeachModelTestBtnClicked()));
     QObject::connect(ui->stackedWidget, SIGNAL(currentChanged(int)), &m_TeachModeTab, SLOT(cbTeachROICancelBtnClicked()));
     QObject::connect(ui->teachSettingBtn, SIGNAL(clicked()), &m_TeachModeTab, SLOT(cbTeachSettingBtnClicked()));
+    QObject::connect(ui->stackedWidget, SIGNAL(currentChanged(int)), &m_TeachModeTab, SLOT(cbTabChanged()));
 
     //teach setting
     QObject::connect(ui->settingWidthSlider, SIGNAL(valueChanged(int)), this, SLOT(set_width_slider(int)));
@@ -103,7 +104,7 @@ OneBody::OneBody(QWidget *parent) :
     QObject::connect(ui->settingBackBtn, SIGNAL(clicked()), this, SLOT(settingBackBtnClicked()));
 
     //manual
-    QObject::connect(ui->manualFileLoadBtn, SIGNAL(clicked()), &m_TeachModeTab, SLOT(cbTeachModelLoadBtnClicked()));
+    QObject::connect(ui->manualFileLoadBtn, SIGNAL(clicked()), &m_ManualModeTab, SLOT(cbManualModelLoadBtnClicked()));
     QObject::connect(ui->manualFileCancelBtn, SIGNAL(clicked()), &m_TeachModeTab, SLOT(cbManualModelCancelBtnClicked()));
     QObject::connect(ui->manualLoadBtn, SIGNAL(clicked()), &m_ManualModeTab, SLOT(cbManualImageLoadBtnClicked()));
     QObject::connect(ui->testFileClearBtn,SIGNAL(clicked()),&m_ManualModeTab,SLOT(cbManualImageClearBtnClicked()));
@@ -115,10 +116,18 @@ OneBody::OneBody(QWidget *parent) :
     QObject::connect(ui->dataReadBtn, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataReadBtnClicked()));
     QObject::connect(ui->dataDisconBtn, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataDisconnectBtnClicked()));
     //QObject::connect(ui->dataLibLoadUserModule, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataLibLoadUserModule()));
-    QObject::connect(ui->dataUserLibraryOpenBtn, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataLibLoadUserModule()));
+    //QObject::connect(ui->dataUserLibraryOpenBtn, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataLibLoadUserModule()));
     QObject::connect(ui->dataLibMakeUserModule, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataLibMakeUserModule()));
     QObject::connect(ui->dataCreatetBtn, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataServerCreateBtn()));
     QObject::connect(ui->dataDelete, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataServerDeleteBtn()));
+    QObject::connect(ui->listWidget, SIGNAL(currentRowChanged(int)), &m_DataModeTab, SLOT(cbDataOpcuaSelected(int)));
+    QObject::connect(ui->dataOutput1ONBtn, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataOutput1ONBtnClicked()));
+    QObject::connect(ui->dataOutput1OFFBtn, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataOutput1OFFBtnClicked()));
+    QObject::connect(ui->dataOutput2ONBtn, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataOutput2ONBtnClicked()));
+    QObject::connect(ui->dataOutput2OFFBtn, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataOutput2OFFBtnClicked()));
+    QObject::connect(ui->dataOutput3ONBtn, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataOutput3ONBtnClicked()));
+    QObject::connect(ui->dataOutput3OFFBtn, SIGNAL(clicked()), &m_DataModeTab, SLOT(cbDataOutput3OFFBtnClicked()));
+
 }
 
 OneBody::~OneBody()
@@ -478,8 +487,11 @@ void OneBody::pattern_matching()
 {
     setCamStreamMode(CAM::LIVE_STOP);
 
-    testTemplate = QFileInfo(p_ModelData->m_qsTemplate).fileName();
-    testTemplatePath = QFileInfo(p_ModelData->m_qsTemplate).path();
+
+    testTemplate = QFileInfo(m_TeachModeTab.m_ModelData.m_qsTemplate).fileName();
+    testTemplatePath = QFileInfo(m_TeachModeTab.m_ModelData.m_qsTemplate).path();
+//    testTemplate = QFileInfo(p_ModelData->m_qsTemplate).fileName();
+//    testTemplatePath = QFileInfo(p_ModelData->m_qsTemplate).path();
     testTemplatePath += "/";
 
     //cv::String imgs_folder(testFilePath.toStdString());
@@ -621,24 +633,23 @@ void OneBody::settingBackBtnClicked()
     ui->stackedWidget->setCurrentIndex(0);
 }
 
-
-
-void OneBody::load_model()
+void OneBody::LoadModelData(CModelData m_ModelData)
 {
-    ui->lightOnCheckBox->setChecked((bool)p_ModelData->m_ilightEnable);
-    if(p_ModelData->m_iAlgoType == 0)
+    ui->lightOnCheckBox->setChecked((bool)m_ModelData.m_ilightEnable);
+    if(m_ModelData.m_iAlgoType == 0)
     {
-        QString testTemplate = QFileInfo(p_ModelData->m_qsTemplate).fileName();
-        QString testTemplatePath = QFileInfo(p_ModelData->m_qsTemplate).path();
+        QString testTemplate = QFileInfo(m_ModelData.m_qsTemplate).fileName();
+        QString testTemplatePath = QFileInfo(m_ModelData.m_qsTemplate).path();
         testTemplatePath += "/";
 
-        ui->teachPatternResize->setText(QString::number(p_ModelData->m_iResize));
+        ui->teachPatternResize->setText(QString::number(m_ModelData.m_iResize));
+        ui->teachPatternMatch->setText(QString::number(m_ModelData.m_iMatchRate));
 
         //ui->manualAlgoTab->setCurrentIndex(p_ModelData->m_iAlgoType);
-        ui->inspAlgoCombo->setCurrentIndex(p_ModelData->m_iAlgoType);
+        ui->inspAlgoCombo->setCurrentIndex(m_ModelData.m_iAlgoType);
         QPixmap pixmap;
         QPixmap canny;
-        pixmap.load(p_ModelData->m_qsTemplate);
+        pixmap.load(m_ModelData.m_qsTemplate);
         canny.load(testTemplatePath + QString("contour_def_canny_totally.bmp"));
         //ui->inspPatternImage->setPixmap(pixmap);
         //ui->teachTempLabel->setText(p_ModelData->m_qsTemplate);
@@ -654,80 +665,87 @@ void OneBody::load_model()
         std::vector<cv::String> filenames;
 
         //m_cPatternModule.SetResizeRatio(g_iResizeRatio);
-        m_cPatternModule.InitPath(templateFolder, templateName, p_ModelData->m_iResize);
+        m_cPatternModule.InitPath(templateFolder, templateName, m_ModelData.m_iResize);
 
-        m_Roi = QRect(p_ModelData->m_iStartX, p_ModelData->m_iStartY, p_ModelData->m_iEndX, p_ModelData->m_iEndY);
+        m_Roi = QRect(m_ModelData.m_iStartX, m_ModelData.m_iStartY, m_ModelData.m_iEndX, m_ModelData.m_iEndY);
     }
-    else if(p_ModelData->m_iAlgoType == 1)
+    else if(m_ModelData.m_iAlgoType == 1)
     {
         //ui->manualAlgoTab->setCurrentIndex(p_ModelData->m_iAlgoType);
-        ui->inspAlgoCombo->setCurrentIndex(p_ModelData->m_iAlgoType);
-        ui->teachCircleThreshLowSlider->setValue(p_ModelData->m_iThresholdLow);
-        ui->teachCircleThreshHighSlider->setValue(p_ModelData->m_iThresholdHigh);
-        ui->teachCircleTolSpin->setValue(p_ModelData->m_iTolerance);
-        ui->teachCircleNoCombo->setCurrentText(QString::number(p_ModelData->m_iTargetNo));
-        ui->teachCircleRadEdit->setText(QString::number(p_ModelData->m_iRadius));
+        ui->inspAlgoCombo->setCurrentIndex(m_ModelData.m_iAlgoType);
+        ui->teachCircleThreshLowSlider->setValue(m_ModelData.m_iThresholdLow);
+        ui->teachCircleThreshHighSlider->setValue(m_ModelData.m_iThresholdHigh);
+        ui->teachCircleTolSpin->setValue(m_ModelData.m_iTolerance);
+        ui->teachCircleNoCombo->setCurrentText(QString::number(m_ModelData.m_iTargetNo));
+        ui->teachCircleRadEdit->setText(QString::number(m_ModelData.m_iRadius));
 
         ui->manualLabel1->setText("Radius");
-        ui->manualRadWidthLabel->setText(QString::number(p_ModelData->m_iRadius));
-        ui->manualThreshLowLabel->setText(QString::number(p_ModelData->m_iThresholdLow));
-        ui->manualThreshHighLabel->setText(QString::number(p_ModelData->m_iThresholdHigh));
-        ui->manualTolLabel->setText(QString::number(p_ModelData->m_iTolerance));
-        ui->manualNoLabel->setText(QString::number(p_ModelData->m_iTargetNo));
+        ui->manualRadWidthLabel->setText(QString::number(m_ModelData.m_iRadius));
+        ui->manualThreshLowLabel->setText(QString::number(m_ModelData.m_iThresholdLow));
+        ui->manualThreshHighLabel->setText(QString::number(m_ModelData.m_iThresholdHigh));
+        ui->manualTolLabel->setText(QString::number(m_ModelData.m_iTolerance));
+        ui->manualNoLabel->setText(QString::number(m_ModelData.m_iTargetNo));
     }
-    else if(p_ModelData->m_iAlgoType == 2)
+    else if(m_ModelData.m_iAlgoType == 2)
     {
         //ui->manualAlgoTab->setCurrentIndex(p_ModelData->m_iAlgoType);
-        ui->inspAlgoCombo->setCurrentIndex(p_ModelData->m_iAlgoType);
-        ui->teachRectThreshLowSlider->setValue(p_ModelData->m_iThresholdLow);
-        ui->teachRectThreshHighSlider->setValue(p_ModelData->m_iThresholdHigh);
-        ui->teachRectTolSpin->setValue(p_ModelData->m_iTolerance);
-        ui->teachRectNoCombo->setCurrentText(QString::number(p_ModelData->m_iTargetNo));
-        ui->teachRectWidthEdit->setText(QString::number(p_ModelData->m_iWidth));
-        ui->teachRectHeightEdit->setText(QString::number(p_ModelData->m_iHeight));
+        ui->inspAlgoCombo->setCurrentIndex(m_ModelData.m_iAlgoType);
+        ui->teachRectThreshLowSlider->setValue(m_ModelData.m_iThresholdLow);
+        ui->teachRectThreshHighSlider->setValue(m_ModelData.m_iThresholdHigh);
+        ui->teachRectTolSpin->setValue(m_ModelData.m_iTolerance);
+        ui->teachRectNoCombo->setCurrentText(QString::number(m_ModelData.m_iTargetNo));
+        ui->teachRectWidthEdit->setText(QString::number(m_ModelData.m_iWidth));
+        ui->teachRectHeightEdit->setText(QString::number(m_ModelData.m_iHeight));
 
         ui->manualLabel1->setText("Width");
         ui->manualLabel2->setText("Height");
-        ui->manualRadWidthLabel->setText(QString::number(p_ModelData->m_iWidth));
-        ui->manualHeightLabel->setText(QString::number(p_ModelData->m_iHeight));
-        ui->manualThreshLowLabel->setText(QString::number(p_ModelData->m_iThresholdLow));
-        ui->manualThreshHighLabel->setText(QString::number(p_ModelData->m_iThresholdHigh));
-        ui->manualTolLabel->setText(QString::number(p_ModelData->m_iTolerance));
-        ui->manualNoLabel->setText(QString::number(p_ModelData->m_iTargetNo));
+        ui->manualRadWidthLabel->setText(QString::number(m_ModelData.m_iWidth));
+        ui->manualHeightLabel->setText(QString::number(m_ModelData.m_iHeight));
+        ui->manualThreshLowLabel->setText(QString::number(m_ModelData.m_iThresholdLow));
+        ui->manualThreshHighLabel->setText(QString::number(m_ModelData.m_iThresholdHigh));
+        ui->manualTolLabel->setText(QString::number(m_ModelData.m_iTolerance));
+        ui->manualNoLabel->setText(QString::number(m_ModelData.m_iTargetNo));
     }
 
 }
 
-void OneBody::temp_save_model()
+void OneBody::SaveModelData(CModelData * m_ModelData,  CDragBox * m_RoiRect)
 {
-    p_ModelData->m_iResize = ui->teachPatternResize->text().toInt();
-    if(m_pRectRoi != nullptr)
+    m_ModelData->m_iResize = ui->teachPatternResize->text().toInt();
+    m_ModelData->m_iResize = ui->teachPatternMatch->text().toInt();
+    m_ModelData->m_iAlgoType = ui->inspAlgoCombo->currentIndex();
+    m_ModelData->m_ilightEnable = ui->lightOnCheckBox->isChecked();
+    if(m_RoiRect != nullptr)
     {
-        p_ModelData->m_iStartX = m_pRectRoi->getRectPosBySceneCoord().toRect().x();
-        p_ModelData->m_iStartY = m_pRectRoi->getRectPosBySceneCoord().toRect().y();
-        p_ModelData->m_iEndX = m_pRectRoi->getRectPosBySceneCoord().toRect().width();
-        p_ModelData->m_iEndY = m_pRectRoi->getRectPosBySceneCoord().toRect().height();
+        m_ModelData->m_iStartX = m_RoiRect->getRectPosBySceneCoord().toRect().x();
+        m_ModelData->m_iStartY = m_RoiRect->getRectPosBySceneCoord().toRect().y();
+        m_ModelData->m_iEndX = m_RoiRect->getRectPosBySceneCoord().toRect().width();
+        m_ModelData->m_iEndY = m_RoiRect->getRectPosBySceneCoord().toRect().height();
     }
     else
     {
-        p_ModelData->m_iStartX = 0;
-        p_ModelData->m_iStartY = 0;
-        p_ModelData->m_iEndX = 0;
-        p_ModelData->m_iEndY = 0;
+        m_ModelData->m_iStartX = 0;
+        m_ModelData->m_iStartY = 0;
+        m_ModelData->m_iEndX = 0;
+        m_ModelData->m_iEndY = 0;
     }
 
-    if(p_ModelData->m_iAlgoType == 1)
+    if(m_ModelData->m_iAlgoType == 1)
     {
-        p_ModelData->m_iTolerance = ui->teachCircleTolSpin->text().toInt();
-        p_ModelData->m_iTargetNo = ui->teachCircleNoCombo->currentText().toInt();
-        p_ModelData->m_iRadius = ui->teachCircleRadEdit->text().toFloat();
+        m_ModelData->m_iTolerance = ui->teachCircleTolSpin->text().toInt();
+        m_ModelData->m_iTargetNo = ui->teachCircleNoCombo->currentText().toInt();
+        m_ModelData->m_iRadius = ui->teachCircleRadEdit->text().toFloat();
+    }
+    else if(m_ModelData->m_iAlgoType == 2)
+    {
+        m_ModelData->m_iTolerance = ui->teachRectTolSpin->text().toInt();
+        m_ModelData->m_iTargetNo = ui->teachRectNoCombo->currentText().toInt();
+        m_ModelData->m_iWidth = ui->teachRectWidthEdit->text().toInt();
+        m_ModelData->m_iHeight = ui->teachRectHeightEdit->text().toInt();
     }
     else
     {
-        p_ModelData->m_iTolerance = ui->teachRectTolSpin->text().toInt();
-        p_ModelData->m_iTargetNo = ui->teachRectNoCombo->currentText().toInt();
-        p_ModelData->m_iWidth = ui->teachRectWidthEdit->text().toInt();
-        p_ModelData->m_iHeight = ui->teachRectHeightEdit->text().toInt();
+
     }
 }
 
@@ -751,10 +769,10 @@ void OneBody::circle_algorithm()
 
         Mat dispImg;
         CCircleParams params;
-        params.iRadius = p_ModelData->m_iRadius;
-        params.dTolerance = p_ModelData->m_iTolerance * 0.1;
-        params.iThresholdHigh = p_ModelData->m_iThresholdHigh;
-        params.iThresholdLow = p_ModelData->m_iThresholdLow;
+        params.iRadius = m_TeachModeTab.m_ModelData.m_iRadius;
+        params.dTolerance = m_TeachModeTab.m_ModelData.m_iTolerance * 0.1;
+        params.iThresholdHigh = m_TeachModeTab.m_ModelData.m_iThresholdHigh;
+        params.iThresholdLow = m_TeachModeTab.m_ModelData.m_iThresholdLow;
 
         //        params.iRadius = 172;
         //        params.dTolerance = 0.2;
@@ -825,10 +843,10 @@ void OneBody::circle_blob_algorithm()
 
         Mat dispImg;
         CCircleBlobParams params;
-        params.iRadius = p_ModelData->m_iRadius;
-        params.dTolerance = p_ModelData->m_iTolerance * 0.1;
-        params.iThresholdHigh = p_ModelData->m_iThresholdHigh;
-        params.iThresholdLow = p_ModelData->m_iThresholdLow;
+        params.iRadius = m_TeachModeTab.m_ModelData.m_iRadius;
+        params.dTolerance = m_TeachModeTab.m_ModelData.m_iTolerance * 0.1;
+        params.iThresholdHigh = m_TeachModeTab.m_ModelData.m_iThresholdHigh;
+        params.iThresholdLow = m_TeachModeTab.m_ModelData.m_iThresholdLow;
 
         visionModule.SetParams(params);
         visionModule.m_bDebugMode = true;
@@ -855,24 +873,24 @@ void OneBody::rect_algorithm()
 
 void OneBody::init_model_ui()
 {
-    //ui->manualAlgoTab->setCurrentIndex(p_ModelData->m_iAlgoType);
-    //ui->manualTempLabel->setText(p_ModelData->m_qsTemplate);
+//    //ui->manualAlgoTab->setCurrentIndex(p_ModelData->m_iAlgoType);
+//    //ui->manualTempLabel->setText(p_ModelData->m_qsTemplate);
 
-    ui->inspAlgoCombo->setCurrentIndex(p_ModelData->m_iAlgoType);
-    //ui->teachTempLabel->setText(p_ModelData->m_qsTemplate);
-    ui->teachCircleThreshLowSlider->setValue(p_ModelData->m_iThresholdLow);
-    ui->teachCircleThreshHighSlider->setValue(p_ModelData->m_iThresholdHigh);
-    ui->teachCircleTolSpin->setValue(p_ModelData->m_iTolerance);
-    ui->teachCircleNoCombo->setCurrentIndex(p_ModelData->m_iTargetNo);
-    ui->teachCircleRadEdit->setText(QString::number(p_ModelData->m_iRadius));
+//    ui->inspAlgoCombo->setCurrentIndex(p_ModelData->m_iAlgoType);
+//    //ui->teachTempLabel->setText(p_ModelData->m_qsTemplate);
+//    ui->teachCircleThreshLowSlider->setValue(p_ModelData->m_iThresholdLow);
+//    ui->teachCircleThreshHighSlider->setValue(p_ModelData->m_iThresholdHigh);
+//    ui->teachCircleTolSpin->setValue(p_ModelData->m_iTolerance);
+//    ui->teachCircleNoCombo->setCurrentIndex(p_ModelData->m_iTargetNo);
+//    ui->teachCircleRadEdit->setText(QString::number(p_ModelData->m_iRadius));
 
-    //ui->teachTempLabel->setText(p_ModelData->m_qsTemplate);
-    ui->teachRectThreshLowSlider->setValue(p_ModelData->m_iThresholdLow);
-    ui->teachRectThreshHighSlider->setValue(p_ModelData->m_iThresholdHigh);
-    ui->teachRectTolSpin->setValue(p_ModelData->m_iTolerance);
-    ui->teachRectNoCombo->setCurrentIndex(p_ModelData->m_iTargetNo);
-    ui->teachRectWidthEdit->setText(QString::number(p_ModelData->m_iWidth));
-    ui->teachRectHeightEdit->setText(QString::number(p_ModelData->m_iHeight));
+//    //ui->teachTempLabel->setText(p_ModelData->m_qsTemplate);
+//    ui->teachRectThreshLowSlider->setValue(p_ModelData->m_iThresholdLow);
+//    ui->teachRectThreshHighSlider->setValue(p_ModelData->m_iThresholdHigh);
+//    ui->teachRectTolSpin->setValue(p_ModelData->m_iTolerance);
+//    ui->teachRectNoCombo->setCurrentIndex(p_ModelData->m_iTargetNo);
+//    ui->teachRectWidthEdit->setText(QString::number(p_ModelData->m_iWidth));
+//    ui->teachRectHeightEdit->setText(QString::number(p_ModelData->m_iHeight));
 }
 
 void OneBody::automode_triggerBtn_enable()
@@ -1127,6 +1145,14 @@ void OneBody::initWorkerThreadConnect()
     connect(m_uaWorker, &UAWorker::send_event_by_polling, &m_AutoModeTab, &AutoModeTabUI::cbSWTriggerBtnClicked);
     connect(m_ImgProcessWorker, &ImageProcessWorker::resultReady, m_uaWorker, &UAWorker::cbSendData);
     m_uaThread.start();
+
+    m_ioWorker = new IOWorker();
+    m_ioWorker->moveToThread(&m_ioThread);
+    connect(&m_ioThread, &QThread::finished, m_ioWorker, &QObject::deleteLater);
+    connect(m_ioWorker, &IOWorker::send_event_by_polling, &m_AutoModeTab, &AutoModeTabUI::cbSWTriggerBtnClicked);
+    connect(ui->autoRunStopBtn, SIGNAL(clicked()), m_ioWorker, SLOT(pollingCallback()));
+    connect(m_ImgProcessWorker, &ImageProcessWorker::resultReady, m_ioWorker, &IOWorker::pollingCallback);
+    m_ioThread.start();
 }
 
 void OneBody::initTimer()
@@ -1356,21 +1382,15 @@ void OneBody::otherButtonOff()
 
 void OneBody::on_lightOnCheckBox_stateChanged(int arg1)
 {
-    if(ui->lightOnCheckBox->checkState())
-        p_ModelData->m_ilightEnable = 1;
-    else
-        p_ModelData->m_ilightEnable = 0;
+//    if(ui->lightOnCheckBox->checkState())
+//        p_ModelData->m_ilightEnable = 1;
+//    else
+//        p_ModelData->m_ilightEnable = 0;
 }
 
 void OneBody::on_lightValueEdit_textChanged(const QString &arg1)
 {
-    //set light value on
-    //    QRegExp re("\\d*"); // a digit (\d), zero or more times (*)
-    //    if (re.exactMatch(arg1)){
-    //        int value = arg1.toInt();
-    //        if(value >= -127 && value<=127)
-    //            ui->lightValueSlider->setValue(value);
-    //    }
+
 }
 
 void OneBody::on_lightValueSlider_valueChanged(int value)

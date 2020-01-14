@@ -29,6 +29,7 @@ public:
     int m_iStartY;
     int m_iEndX;
     int m_iEndY;
+    int m_iMatchRate;
 
     void init();
 };

@@ -50,11 +50,7 @@ void DataModeTabUI::cbDataLibLoadUserModule()
                                                       QDir::currentPath(),
                                                       tr("Library File(*.so)"));
 
-    if(soFileName == QString::null)
-    {
-        return;
-    }
-
+    //void * libHandle = dlopen("/home/nvidia/QT_Project/abcChild/libabc2.so", RTLD_LAZY);
     void * libHandle = dlopen(soFileName.toStdString().c_str(), RTLD_LAZY);
     if(libHandle  == NULL)
     {
@@ -63,18 +59,11 @@ void DataModeTabUI::cbDataLibLoadUserModule()
         return;
     }
 
-    CVisionModule* (*creator)() = (CVisionModule*(*)())dlsym(libHandle, "create");
-    CVisionModule* p = (*creator)();
+    ABC* (*creator)() = (ABC*(*)())dlsym(libHandle, "create");
+    ABC* p = (*creator)();
+    p->show_message();
 
-    QString tmpName = p->GetName().c_str();
-    ui->lbGetNameCheck->setStyleSheet("QLabel { background-color : red; color : white; }");
-    ui->lbGetNameCheck->setText(QString(tmpName));
-
-    p->TestName();
-    cv::Mat temp;
-    p->RunVision(temp,temp);
-
-    void (*destructor)(CVisionModule*) = (void(*)(CVisionModule*))dlsym(libHandle, "destroy");
+    void (*destructor)(ABC*) = (void(*)(ABC*))dlsym(libHandle, "destroy");
     (*destructor)(p);
     std::cout << "(*destructor)(p)";
     dlclose(libHandle);
@@ -96,5 +85,69 @@ void DataModeTabUI::cbDataServerCreateBtn()
 void DataModeTabUI::cbDataServerDeleteBtn()
 {
     m_MainWindow->g_opcUA.ua_server_stop();
+}
+
+void DataModeTabUI::cbDataOpcuaSelected(int index)
+{
+    if(index == 2)
+        ui->stackedWidget->setCurrentIndex(6);
+    else if(index == 3)
+        ui->stackedWidget->setCurrentIndex(2);
+    else
+        ui->stackedWidget->setCurrentIndex(5);
+}
+
+void DataModeTabUI::cbDataOutput1ONBtnClicked()
+{
+    jetsonTX2GPIONumber light = gpio388;
+    gpioExport(light);
+    gpioSetDirection(light,outputPin);
+    gpioSetValue(light,on);
+    //gpioUnexport(light);
+}
+
+void DataModeTabUI::cbDataOutput1OFFBtnClicked()
+{
+    jetsonTX2GPIONumber light = gpio388;
+    gpioExport(light);
+    gpioSetDirection(light,outputPin);
+    gpioSetValue(light,off);
+    //gpioUnexport(light);
+}
+
+void DataModeTabUI::cbDataOutput2ONBtnClicked()
+{
+    jetsonTX2GPIONumber output1 = gpio298;
+    gpioExport(output1);
+    gpioSetDirection(output1,outputPin);
+    gpioSetValue(output1,on);
+    //gpioUnexport(output1);
+}
+
+void DataModeTabUI::cbDataOutput2OFFBtnClicked()
+{
+    jetsonTX2GPIONumber output1 = gpio298;
+    gpioExport(output1);
+    gpioSetDirection(output1,outputPin);
+    gpioSetValue(output1,off);
+    //gpioUnexport(output1);
+}
+
+void DataModeTabUI::cbDataOutput3ONBtnClicked()
+{
+    jetsonTX2GPIONumber output2 = gpio480;
+    gpioExport(output2);
+    gpioSetDirection(output2,outputPin);
+    gpioSetValue(output2,on);
+    //gpioUnexport(output2);
+}
+
+void DataModeTabUI::cbDataOutput3OFFBtnClicked()
+{
+    jetsonTX2GPIONumber output2 = gpio480;
+    gpioExport(output2);
+    gpioSetDirection(output2,outputPin);
+    gpioSetValue(output2,off);
+    //gpioUnexport(output2);
 }
 

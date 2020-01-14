@@ -60,7 +60,7 @@ void TeachModeTabUI::cbTeachImageLoadBtnClicked()
 
 void TeachModeTabUI::cbTeachROIShowBtnClicked()
 {
-#if 1
+#if 0
     NeptuneGetSizeInfo(m_MainWindow->m_CamHandle, &m_MainWindow->m_CamSizeInfo);
 
     int sizeWidth = m_MainWindow->m_CamSizeInfo.width, sizeHeight = m_MainWindow->m_CamSizeInfo.height;
@@ -102,7 +102,7 @@ void TeachModeTabUI::cbTeachROIShowBtnClicked()
 
 void TeachModeTabUI::cbTeachROICancelBtnClicked()
 {
-#if 1
+#if 0
     if(m_MainWindow->m_pRectRoi != nullptr)
     {
         qDebug() << "!pRectROI->IsEmpty()";
@@ -132,7 +132,7 @@ void TeachModeTabUI::cbTeachROICancelBtnClicked()
 void TeachModeTabUI::cbTeachSelectAlgoCombo(int value)
 {
     ui->teachOptionTab->setCurrentIndex(value);
-    m_MainWindow->p_ModelData->m_iAlgoType = value;
+    m_ModelData.m_iAlgoType = value;
 }
 
 #include <Utility/dragbox.h>
@@ -185,16 +185,16 @@ void TeachModeTabUI::cbTeachPatternImageSaveBtnClicked()
         if(fileName.contains(".png", Qt::CaseInsensitive))
         {
             temp.save(fileName,"png");
-            m_MainWindow->p_ModelData->m_qsTemplate = fileName;
+            m_ModelData.m_qsTemplate = fileName;
         }
         else
         {
             temp.save(fileName+".png","png");
-            m_MainWindow->p_ModelData->m_qsTemplate = fileName+".png";
+            m_ModelData.m_qsTemplate = fileName+".png";
         }
 
-        m_MainWindow->testTemplate = QFileInfo(m_MainWindow->p_ModelData->m_qsTemplate).fileName();
-        m_MainWindow->testTemplatePath = QFileInfo(m_MainWindow->p_ModelData->m_qsTemplate).path();
+        m_MainWindow->testTemplate = QFileInfo(m_ModelData.m_qsTemplate).fileName();
+        m_MainWindow->testTemplatePath = QFileInfo(m_ModelData.m_qsTemplate).path();
         m_MainWindow->testTemplatePath += "/";
 
         cv::String tpl_folder(m_MainWindow->testTemplatePath.toStdString());
@@ -250,7 +250,7 @@ void TeachModeTabUI::cbTeachCircleThresholdLowSliderValueChanged(int value)
 {
     ui->teachCircleThreshLowSpin->setValue(value);
     ui->teachRectThreshLowSpin->setValue(value);
-    m_MainWindow->p_ModelData->m_iThresholdLow = value;
+    m_ModelData.m_iThresholdLow = value;
     m_MainWindow->m_iLowValue = value;
 
     //cv::Mat matImage = CImageConverter::QPixmapToCvMat(g_Pixmap);
@@ -327,7 +327,7 @@ void TeachModeTabUI::cbTeachCircleThresholdHighSliderValueChanged(int value)
 {
     ui->teachCircleThreshHighSpin->setValue(value);
     ui->teachRectThreshHighSpin->setValue(value);
-    m_MainWindow->p_ModelData->m_iThresholdHigh = value;
+    m_ModelData.m_iThresholdHigh = value;
     m_MainWindow->m_iHighValue = value;
 
     CImageProcess imgProcess;
@@ -365,8 +365,8 @@ void TeachModeTabUI::cbTeachModelSaveBtnClicked()
     if (fileName.isEmpty())
         return;
 
-    m_MainWindow->temp_save_model();
-    m_MainWindow->xml.createXmlFile(fileName, m_MainWindow->p_ModelData);
+    m_MainWindow->SaveModelData(&m_ModelData, m_RoiRect);
+    m_MainWindow->xml.createXmlFile(fileName, m_ModelData);
 }
 
 void TeachModeTabUI::cbTeachModelLoadBtnClicked()
@@ -379,8 +379,8 @@ void TeachModeTabUI::cbTeachModelLoadBtnClicked()
     if (fileNamePath.isEmpty())
         return;
 
-    m_MainWindow->xml.openXmlFile(fileNamePath, m_MainWindow->p_ModelData);
-    m_MainWindow->load_model();
+    m_MainWindow->xml.openXmlFile(fileNamePath, &m_ModelData);
+    m_MainWindow->LoadModelData(m_ModelData);
     //ui->inspAlgoCombo->setCurrentIndex(p_ModelData->m_iAlgoType);
     //ui->lightOnCheckBox->setChecked((bool)p_ModelData->m_ilightEnable);
     //ui->lightValueEdit->setText(QString::number(p_ModelData->m_ilightValue));
@@ -398,29 +398,15 @@ void TeachModeTabUI::cbTeachModelLoadBtnClicked()
     QTableWidgetItem *secondItem = new QTableWidgetItem();
 
     firstItem->setText("0");
-    if(m_MainWindow->p_ModelData->m_iAlgoType==0)
+    if(m_ModelData.m_iAlgoType==0)
         secondItem->setText("Pattern");
-    else if(m_MainWindow->p_ModelData->m_iAlgoType==1)
+    else if(m_ModelData.m_iAlgoType==1)
         secondItem->setText("Circle");
-    else if(m_MainWindow->p_ModelData->m_iAlgoType==2)
+    else if(m_ModelData.m_iAlgoType==2)
         secondItem->setText("Rect");
 
-    ui->tableWidgetAutoModuleList_2->setItem(0, 0, firstItem);
-    ui->tableWidgetAutoModuleList_2->setItem(0, 1, secondItem);
-
-    QTableWidgetItem *first = new QTableWidgetItem();
-    QTableWidgetItem *second = new QTableWidgetItem();
-
-    first->setText("0");
-    if(m_MainWindow->p_ModelData->m_iAlgoType==0)
-        second->setText("Pattern");
-    else if(m_MainWindow->p_ModelData->m_iAlgoType==1)
-        second->setText("Circle");
-    else if(m_MainWindow->p_ModelData->m_iAlgoType==2)
-        second->setText("Rect");
-
-    ui->tableWidgetAutoModuleList_3->setItem(0, 0, first);
-    ui->tableWidgetAutoModuleList_3->setItem(0, 1, second);
+    ui->tableWidgetAutoModuleList_3->setItem(0, 0, firstItem);
+    ui->tableWidgetAutoModuleList_3->setItem(0, 1, secondItem);
 }
 
 void TeachModeTabUI::cbTeachModelTestBtnClicked()
@@ -449,6 +435,51 @@ void TeachModeTabUI::cbTeachSettingBtnClicked()
     ui->stackedWidget->setCurrentIndex(4);
 }
 
+void TeachModeTabUI::cbTabChanged()
+{
+    if(m_RoiRect != nullptr)
+    {
+        ui->graphicsView->scene()->removeItem(m_RoiRect);
+        delete m_RoiRect;
+        m_RoiRect = nullptr;
+    }
+    else
+    {
+        qDebug() << "m_RoiRect->IsEmpty()";
+    }
+    if(m_PatternRect != nullptr)
+    {
+        ui->graphicsView->scene()->removeItem(m_PatternRect);
+        delete m_PatternRect;
+        m_PatternRect = nullptr;
+    }
+    else
+    {
+        qDebug() << "m_PatternRect->IsEmpty()";
+    }
+}
+
+void TeachModeTabUI::InitModelUI()
+{
+    //ui->manualAlgoTab->setCurrentIndex(p_ModelData->m_iAlgoType);
+    //ui->manualTempLabel->setText(p_ModelData->m_qsTemplate);
+
+    ui->inspAlgoCombo->setCurrentIndex(m_ModelData.m_iAlgoType);
+    //ui->teachTempLabel->setText(p_ModelData->m_qsTemplate);
+    ui->teachCircleThreshLowSlider->setValue(m_ModelData.m_iThresholdLow);
+    ui->teachCircleThreshHighSlider->setValue(m_ModelData.m_iThresholdHigh);
+    ui->teachCircleTolSpin->setValue(m_ModelData.m_iTolerance);
+    ui->teachCircleNoCombo->setCurrentIndex(m_ModelData.m_iTargetNo);
+    ui->teachCircleRadEdit->setText(QString::number(m_ModelData.m_iRadius));
+
+    //ui->teachTempLabel->setText(p_ModelData->m_qsTemplate);
+    ui->teachRectThreshLowSlider->setValue(m_ModelData.m_iThresholdLow);
+    ui->teachRectThreshHighSlider->setValue(m_ModelData.m_iThresholdHigh);
+    ui->teachRectTolSpin->setValue(m_ModelData.m_iTolerance);
+    ui->teachRectNoCombo->setCurrentIndex(m_ModelData.m_iTargetNo);
+    ui->teachRectWidthEdit->setText(QString::number(m_ModelData.m_iWidth));
+    ui->teachRectHeightEdit->setText(QString::number(m_ModelData.m_iHeight));
+}
 
 
 

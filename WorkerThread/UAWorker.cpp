@@ -31,15 +31,23 @@ void UAWorker::pollingCallback(UA_Server *server, void *data)
 
 void UAWorker::cbSendData(_MatImg mat, CVisionAgentResult result)
 {
-    cv::Point2f centerPt;
-    double dAngle;
-    result.GetCenterPoint(centerPt);
-    result.GetAngle(dAngle);
-    m_pOpcua->ua_update_node_double("position_x",centerPt.x);
-    m_pOpcua->ua_update_node_double("position_y",centerPt.y);
-    m_pOpcua->ua_update_node_double("theta", dAngle);
+    if(m_pOpcua->server != nullptr)
+    {
+        cv::Point2f tempPT;
+        double tempAngle;
+        result.GetCenterPoint(tempPT);
+        result.GetAngle(tempAngle);
+        QString x = QString::number(tempPT.x,'f',2);
+        QString y = QString::number(tempPT.y,'f',2);
+        QString a = QString::number(tempAngle,'f',2);
 
-    m_pOpcua->ua_update_node_int32("trigger_response",1);
+        m_pOpcua->ua_update_node_int32("trigger_request", 0);
+        m_pOpcua->ua_update_node_double("position_x", x.toDouble());
+        m_pOpcua->ua_update_node_double("position_y", y.toDouble());
+        m_pOpcua->ua_update_node_double("theta", a.toDouble());
+
+        m_pOpcua->ua_update_node_int32("trigger_response",1);
+    }
 }
 
 

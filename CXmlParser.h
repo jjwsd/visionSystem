@@ -13,8 +13,8 @@ class CXmlParser
 {
 public:
     CXmlParser();
-    void createXmlFile(QString fileName, const CModelData * p_ModelData);
-    //void createXmlFile(QString fileName, CModelData p_ModelData);
+    //void createXmlFile(QString fileName, const CModelData * p_ModelData);
+    void createXmlFile(QString fileName, CModelData m_ModelData);
     void openXmlFile(QString fileNamePath, CModelData * p_ModelData);
     QDomDocument doc;
     QDomElement root;

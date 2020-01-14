@@ -22,6 +22,7 @@
 #include <WorkerThread/ImageProcessWorker.h>
 #include <logger.h>
 #include <WorkerThread/UAWorker.h>
+#include <WorkerThread/IOWorker.h>
 
 #include <UI/AutoModeTabUI.h>
 #include <UI/TeachModeTabUI.h>
@@ -33,6 +34,11 @@ class CModelData;
 class CXmlParser;
 class COpcUa;
 class UAWorker;
+class IOWorker;
+
+extern "C"{
+    #include <jetsonGPIO.h>
+}
 
 namespace Ui {
 class OneBody;
@@ -79,6 +85,7 @@ private:
     QThread m_imgProcThread;
     QThread m_logThread;
     QThread m_uaThread;
+    QThread m_ioThread;
 
     AutoModeTabUI m_AutoModeTab;
     TeachModeTabUI m_TeachModeTab;
@@ -146,9 +153,9 @@ public slots:
 
     void settingBackBtnClicked();
 
-    void load_model();
+    void LoadModelData(CModelData m_ModelData);
 
-    void temp_save_model();
+    void SaveModelData(CModelData * m_ModelData, CDragBox * m_RoiRect);
 
     void circle_algorithm();
 
@@ -186,11 +193,12 @@ public:
     QTimer* m_pTimerAutoMode;
 
     std::list<CVisionAgentResult> m_lAutoVisionResult;
-    CModelData * p_ModelData;
+    //CModelData * p_ModelData;
     QRect m_Roi;
     bool m_bAutoModeStart = false;
     ImageProcessWorker * m_ImgProcessWorker;
     UAWorker * m_uaWorker;
+    IOWorker * m_ioWorker;
 
     void setCamStreamMode(CAM::CamStreamMode streamMode);
     bool grabQPixmap(QPixmap& image);

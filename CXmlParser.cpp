@@ -8,7 +8,7 @@ CXmlParser::CXmlParser()
 
 }
 
-void CXmlParser::createXmlFile(QString fileName, const CModelData * p_ModelData)
+void CXmlParser::createXmlFile(QString fileName, CModelData m_ModelData)
 {
     QString temp;
 
@@ -27,7 +27,7 @@ void CXmlParser::createXmlFile(QString fileName, const CModelData * p_ModelData)
 
         root = doc.createElement("Model");
         doc.appendChild(root);
-        
+
         QDomElement algoType = doc.createElement("algoType");
         QDomElement lightEnable = doc.createElement("lightEnable");
         QDomElement templatePath = doc.createElement("templatePath");
@@ -43,24 +43,26 @@ void CXmlParser::createXmlFile(QString fileName, const CModelData * p_ModelData)
         QDomElement starty = doc.createElement("starty");
         QDomElement endx = doc.createElement("endx");
         QDomElement endy = doc.createElement("endy");
+        QDomElement matchRate = doc.createElement("matchRate");
 
-        
-        algoType.setAttribute("type", (int)p_ModelData->m_iAlgoType);
-        lightEnable.setAttribute("status", (int)p_ModelData->m_ilightEnable);
-        templatePath.setAttribute("path", (QString)p_ModelData->m_qsTemplate);
-        thresholdLow.setAttribute("value", (int)p_ModelData->m_iThresholdLow);
-        thresholdHigh.setAttribute("value", (int)p_ModelData->m_iThresholdHigh);
-        targetNo.setAttribute("value", (int)p_ModelData->m_iTargetNo);
-        tolerance.setAttribute("value", (int)p_ModelData->m_iTolerance);
-        radius.setAttribute("value", (float)p_ModelData->m_iRadius);
-        width.setAttribute("value", (int)p_ModelData->m_iWidth);
-        height.setAttribute("value", (int)p_ModelData->m_iHeight);
-        resize.setAttribute("value", (int)p_ModelData->m_iResize);
-        startx.setAttribute("value", (int)p_ModelData->m_iStartX);
-        starty.setAttribute("value", (int)p_ModelData->m_iStartY);
-        endx.setAttribute("value", (int)p_ModelData->m_iEndX);
-        endy.setAttribute("value", (int)p_ModelData->m_iEndY);
-        
+
+        algoType.setAttribute("type", (int)m_ModelData.m_iAlgoType);
+        lightEnable.setAttribute("status", (int)m_ModelData.m_ilightEnable);
+        templatePath.setAttribute("path", (QString)m_ModelData.m_qsTemplate);
+        thresholdLow.setAttribute("value", (int)m_ModelData.m_iThresholdLow);
+        thresholdHigh.setAttribute("value", (int)m_ModelData.m_iThresholdHigh);
+        targetNo.setAttribute("value", (int)m_ModelData.m_iTargetNo);
+        tolerance.setAttribute("value", (int)m_ModelData.m_iTolerance);
+        radius.setAttribute("value", (float)m_ModelData.m_iRadius);
+        width.setAttribute("value", (int)m_ModelData.m_iWidth);
+        height.setAttribute("value", (int)m_ModelData.m_iHeight);
+        resize.setAttribute("value", (int)m_ModelData.m_iResize);
+        startx.setAttribute("value", (int)m_ModelData.m_iStartX);
+        starty.setAttribute("value", (int)m_ModelData.m_iStartY);
+        endx.setAttribute("value", (int)m_ModelData.m_iEndX);
+        endy.setAttribute("value", (int)m_ModelData.m_iEndY);
+        matchRate.setAttribute("value", (int)m_ModelData.m_iMatchRate);
+
         root.appendChild(algoType);
         root.appendChild(lightEnable);
         root.appendChild(templatePath);
@@ -76,6 +78,7 @@ void CXmlParser::createXmlFile(QString fileName, const CModelData * p_ModelData)
         root.appendChild(starty);
         root.appendChild(endx);
         root.appendChild(endy);
+        root.appendChild(matchRate);
 
         QTextStream stream(&file);
         stream << doc.toString();
@@ -137,6 +140,8 @@ void CXmlParser::openXmlFile(QString fileNamePath, CModelData* p_ModelData)
                 p_ModelData->m_iEndX = element.attribute("value").toInt();
             if(element.tagName() == "endy")
                 p_ModelData->m_iEndY = element.attribute("value").toInt();
+            if(element.tagName() == "matchRate")
+                p_ModelData->m_iMatchRate = element.attribute("value").toInt();
         }
         node = node.nextSibling();
     }
