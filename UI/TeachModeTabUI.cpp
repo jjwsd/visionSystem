@@ -193,16 +193,16 @@ void TeachModeTabUI::cbTeachPatternImageSaveBtnClicked()
             m_ModelData.m_qsTemplate = fileName+".png";
         }
 
-        m_MainWindow->testTemplate = QFileInfo(m_ModelData.m_qsTemplate).fileName();
-        m_MainWindow->testTemplatePath = QFileInfo(m_ModelData.m_qsTemplate).path();
-        m_MainWindow->testTemplatePath += "/";
+        QString testTemplate = QFileInfo(m_ModelData.m_qsTemplate).fileName();
+        QString testTemplatePath = QFileInfo(m_ModelData.m_qsTemplate).path();
+        testTemplatePath += "/";
 
-        cv::String tpl_folder(m_MainWindow->testTemplatePath.toStdString());
-        cv::String template_name(m_MainWindow->testTemplate.toStdString());
+        cv::String tpl_folder(testTemplatePath.toStdString());
+        cv::String template_name(testTemplate.toStdString());
 
-        m_MainWindow->m_cPatternModule.InitPath(tpl_folder, template_name, iResizeRatio);
+        m_cTeachPatternModule.InitPath(tpl_folder, template_name, iResizeRatio);
 
-        QFile file(m_MainWindow->testTemplatePath + QString(m_MainWindow->m_cPatternModule.GetContourName().c_str()));
+        QFile file(testTemplatePath + QString(m_cTeachPatternModule.GetContourName().c_str()));
         if(file.exists())
         {
             qDebug() << "pattern Matching file is already exist!";
@@ -213,7 +213,7 @@ void TeachModeTabUI::cbTeachPatternImageSaveBtnClicked()
                                     "2. Save Model - Mouse L-Button Double Click! "),
                                  QMessageBox::Ok);
 
-        m_MainWindow->m_cPatternModule.MakeNewTemplate(iResizeRatio);
+        m_cTeachPatternModule.MakeNewTemplate(iResizeRatio);
     }
     else
     {
@@ -371,6 +371,7 @@ void TeachModeTabUI::cbTeachModelSaveBtnClicked()
 
 void TeachModeTabUI::cbTeachModelLoadBtnClicked()
 {
+    QRect tempRect;
     QFileDialog *filDlg = new QFileDialog(m_MainWindow);
     QString fileNamePath =
             filDlg->getOpenFileName(m_MainWindow, tr("Open Inspection Model File"),
@@ -380,15 +381,32 @@ void TeachModeTabUI::cbTeachModelLoadBtnClicked()
         return;
 
     m_MainWindow->xml.openXmlFile(fileNamePath, &m_ModelData);
-    m_MainWindow->LoadModelData(m_ModelData);
-    //ui->inspAlgoCombo->setCurrentIndex(p_ModelData->m_iAlgoType);
-    //ui->lightOnCheckBox->setChecked((bool)p_ModelData->m_ilightEnable);
-    //ui->lightValueEdit->setText(QString::number(p_ModelData->m_ilightValue));
+    m_MainWindow->UpdatePatternModelUI(m_ModelData);
+    updateModelUI(m_ModelData);
 
-    ui->tableWidgetAutoModuleList_2->clear();
-    ui->tableWidgetAutoModuleList_2->setHorizontalHeaderItem(0, new QTableWidgetItem("Seq. Num"));
-    ui->tableWidgetAutoModuleList_2->setHorizontalHeaderItem(1, new QTableWidgetItem("Vision Type"));
-    ui->tableWidgetAutoModuleList_2->setRowCount(1);
+    tempRect.setRect(m_ModelData.m_iStartX, m_ModelData.m_iStartY, m_ModelData.m_iEndX, m_ModelData.m_iEndY);
+    if(m_RoiRect != nullptr)
+    {
+        ui->graphicsView->scene()->removeItem(m_RoiRect);
+        delete m_RoiRect;
+    }
+    int sizeWidth = 0;
+    int sizeHeight = 0;
+    if(m_MainWindow->m_Pixmap != nullptr)
+    {
+        sizeWidth = m_MainWindow->m_Pixmap->boundingRect().width();
+        sizeHeight= m_MainWindow->m_Pixmap->boundingRect().height();
+    }
+    else
+    {
+        sizeWidth = 5000;
+        sizeHeight = 5000;
+    }
+
+    m_RoiRect = new CDragBox(tempRect.width(), tempRect.height(), Qt::red, QPoint(sizeWidth, sizeHeight));
+    m_RoiRect->setPos(tempRect.left(),tempRect.right());
+    ui->graphicsView->scene()->addItem(m_RoiRect);
+
     ui->tableWidgetAutoModuleList_3->clear();
     ui->tableWidgetAutoModuleList_3->setHorizontalHeaderItem(0, new QTableWidgetItem("Seq. Num"));
     ui->tableWidgetAutoModuleList_3->setHorizontalHeaderItem(1, new QTableWidgetItem("Vision Type"));
@@ -419,7 +437,7 @@ void TeachModeTabUI::cbTeachModelTestBtnClicked()
         qDebug() << "input image null Error";
         return;
     }
-    m_MainWindow->m_cPatternModule.RunVision(input_img, output_img);
+    m_cTeachPatternModule.RunVision(input_img, output_img);
     QImage img((uchar*)output_img.data,
                output_img.cols,
                output_img.rows,
@@ -456,6 +474,36 @@ void TeachModeTabUI::cbTabChanged()
     else
     {
         qDebug() << "m_PatternRect->IsEmpty()";
+    }
+}
+
+void TeachModeTabUI::updateModelUI(CModelData modelData)
+{
+    ui->lightOnCheckBox->setChecked((bool)m_ModelData.m_ilightEnable);
+    if(modelData.m_iAlgoType == VISION::PATTERN)
+    {
+        ui->teachPatternResize->setText(QString::number(modelData.m_iResize));
+        ui->teachPatternMatch->setText(QString::number(modelData.m_iMatchRate));
+        ui->inspAlgoCombo->setCurrentIndex(m_ModelData.m_iAlgoType);
+    }
+    else if(m_ModelData.m_iAlgoType == VISION::CIRCLE)
+    {
+        ui->inspAlgoCombo->setCurrentIndex(m_ModelData.m_iAlgoType);
+        ui->teachCircleThreshLowSlider->setValue(m_ModelData.m_iThresholdLow);
+        ui->teachCircleThreshHighSlider->setValue(m_ModelData.m_iThresholdHigh);
+        ui->teachCircleTolSpin->setValue(m_ModelData.m_iTolerance);
+        ui->teachCircleNoCombo->setCurrentText(QString::number(m_ModelData.m_iTargetNo));
+        ui->teachCircleRadEdit->setText(QString::number(m_ModelData.m_iRadius));
+    }
+    else if(m_ModelData.m_iAlgoType == VISION::RECTANGLE)
+    {
+        ui->inspAlgoCombo->setCurrentIndex(m_ModelData.m_iAlgoType);
+        ui->teachRectThreshLowSlider->setValue(m_ModelData.m_iThresholdLow);
+        ui->teachRectThreshHighSlider->setValue(m_ModelData.m_iThresholdHigh);
+        ui->teachRectTolSpin->setValue(m_ModelData.m_iTolerance);
+        ui->teachRectNoCombo->setCurrentText(QString::number(m_ModelData.m_iTargetNo));
+        ui->teachRectWidthEdit->setText(QString::number(m_ModelData.m_iWidth));
+        ui->teachRectHeightEdit->setText(QString::number(m_ModelData.m_iHeight));
     }
 }
 

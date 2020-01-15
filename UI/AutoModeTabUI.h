@@ -5,6 +5,8 @@
 #include <UI/TabUI.h>
 #include <CModelData.h>
 
+#include <QRect>
+
 class AutoModeTabUI : public QObject, public TabUI
 {
     Q_OBJECT
@@ -20,6 +22,9 @@ public slots:
     void cbRunAutoModuleBtnClicked();
     void cbSWTriggerBtnClicked();
     void cbSWTriggerBtnEnabled();
+
+private:
+    QRect m_roiRect;
 };
 
 #endif // AUTOMODETABUI_H

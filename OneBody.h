@@ -119,8 +119,6 @@ public slots:
 
     void on_inspLoadBtn_clicked();
 
-    void on_testLoadBtn_clicked();
-
     void Init_UI_State();
 
     void load_settings();
@@ -149,24 +147,15 @@ public slots:
 
     void on_clicked_resolution_applyBtn();
 
-    void pattern_matching();
-
     void settingBackBtnClicked();
 
-    void LoadModelData(CModelData m_ModelData);
+    void UpdatePatternModelUI(CModelData modelData);
 
     void SaveModelData(CModelData * m_ModelData, CDragBox * m_RoiRect);
-
-    void circle_algorithm();
-
-    void circle_blob_algorithm();
-
-    void rect_algorithm();
 
     void init_model_ui();
 
     void cbAutoTabGetVisionProcessResult(_MatImg mat, CVisionAgentResult result);
-    void cbTestTabGetVisionProcessResult(_MatImg mat, CVisionAgentResult result);
     void cbUpdateMainViewer(QPixmap);
     void cbUpdateAutoModeImage();
 
@@ -194,7 +183,7 @@ public:
 
     std::list<CVisionAgentResult> m_lAutoVisionResult;
     //CModelData * p_ModelData;
-    QRect m_Roi;
+    //QRect m_Roi;
     bool m_bAutoModeStart = false;
     ImageProcessWorker * m_ImgProcessWorker;
     UAWorker * m_uaWorker;
@@ -236,14 +225,10 @@ public:
 
     QTimer *timer;
     long tCount;
-    long resultCount;
+    long resultCount;    
 
-    std::vector<QPixmap> m_vTestTabImages;
-
-    QString testTemplate;
-    QString testTemplatePath;
     QString testFilePath;
-    QStringList testFilenames;
+
     QString inspLoadfileName;
 
     bool m_bAcqStart = false;

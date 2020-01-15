@@ -30,7 +30,7 @@ void AutoModeTabUI::cbOpenAutoModuleBtnClicked()
             xmlName = (*constIterator).toLocal8Bit().constData();
             m_MainWindow->xml.openXmlFile(xmlName, &m_ModelData);
 
-            m_MainWindow->m_Roi = QRect(m_ModelData.m_iStartX, m_ModelData.m_iStartY, m_ModelData.m_iEndX, m_ModelData.m_iEndY);
+            m_roiRect = QRect(m_ModelData.m_iStartX, m_ModelData.m_iStartY, m_ModelData.m_iEndX, m_ModelData.m_iEndY);
 
             if(m_ModelData.m_iAlgoType == VISION::PATTERN)
             {
@@ -95,7 +95,7 @@ void AutoModeTabUI::cbSWTriggerBtnClicked()
     {
         m_MainWindow->setCamStreamMode(CAM::LIVE_STOP);
         Mat img;
-        if(m_MainWindow->m_Roi.right() <= 0 || m_MainWindow->m_Roi.bottom() <= 0)
+        if(m_roiRect.right() <= 0 || m_roiRect.bottom() <= 0)
         {
             if(m_MainWindow->grabMat(img))
             {
@@ -104,7 +104,7 @@ void AutoModeTabUI::cbSWTriggerBtnClicked()
         }
         else
         {
-            if(m_MainWindow->grabMatByRoi(img, m_MainWindow->m_Roi))
+            if(m_MainWindow->grabMatByRoi(img, m_roiRect))
             {
                 emit m_MainWindow->sigSendMatImgToWorkerThread(img);
             }

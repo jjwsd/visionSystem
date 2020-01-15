@@ -16,9 +16,6 @@ public:
     explicit TeachModeTabUI(QObject *parent = 0);
 
     CModelData m_ModelData;
-    CPatternMatchModule m_cPatternModule;
-    QRect m_Roi;
-
 signals:
 
 public slots:
@@ -50,6 +47,10 @@ public slots:
 private:
     CDragBox * m_PatternRect;
     CDragBox * m_RoiRect;
+    CPatternMatchModule m_cTeachPatternModule;
+
+    void updateModelUI(CModelData modelData);
+
 
 public:
     void InitModelUI();

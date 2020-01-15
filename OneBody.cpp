@@ -483,236 +483,35 @@ void OneBody::on_clicked_resolution_applyBtn()
 
 int g_iResizeRatio = 4;
 
-void OneBody::pattern_matching()
-{
-    setCamStreamMode(CAM::LIVE_STOP);
-
-
-    testTemplate = QFileInfo(m_TeachModeTab.m_ModelData.m_qsTemplate).fileName();
-    testTemplatePath = QFileInfo(m_TeachModeTab.m_ModelData.m_qsTemplate).path();
-//    testTemplate = QFileInfo(p_ModelData->m_qsTemplate).fileName();
-//    testTemplatePath = QFileInfo(p_ModelData->m_qsTemplate).path();
-    testTemplatePath += "/";
-
-    //cv::String imgs_folder(testFilePath.toStdString());
-    cv::String templateFolder(testTemplatePath.toStdString());
-    cv::String templateName(testTemplate.toStdString());
-
-    std::vector<cv::String> filenames;
-    filenames.clear();
-    for(int j=0; j<testFilenames.size(); j++)
-    {
-        QString temp;
-        temp = testFilenames.at(j);
-        filenames.push_back(temp.toStdString());
-    }
-
-    CVisionAgentResult visionResult;
-
-    //m_cPatternModule.SetResizeRatio(g_iResizeRatio);
-    m_cPatternModule.InitPath(templateFolder, templateName, 4);
-    // must be fixed by value!
-
-    QFile file(testTemplatePath + QString(m_cPatternModule.GetContourName().c_str()));
-    if(!file.exists())
-    {
-        QMessageBox::information(this, tr("Pattern Matching Model GUIDE"),
-                                 tr("1. Erase Model Area - Mouse L-Button Down & Drag \n"
-                                    "2. Save Model - Mouse L-Button Double Click! "),
-                                 QMessageBox::Ok);
-        m_cPatternModule.MakeNewTemplate(g_iResizeRatio);
-    }
-    m_ImgProcessWorker->m_pWorkerModule = &m_cPatternModule;
-
-    qDebug() << "image file size " << filenames.size();
-
-    cv::Mat input_img;
-    clock_t start;
-    clock_t end;
-
-    double img_preprocess_t = 0.0;
-    Mat output_img;
-    int i=0;
-    m_vTestTabImages.clear();
-
-    ui->testResultTable->clear();
-    ui->testResultTable->setHorizontalHeaderItem(0, new QTableWidgetItem("Center Point"));
-    ui->testResultTable->setHorizontalHeaderItem(1, new QTableWidgetItem("Angle"));
-    ui->testResultTable->setHorizontalHeaderItem(2, new QTableWidgetItem("Tact Time"));
-    //ui->tableWidgetAutoModuleList->setRowCount(m_cVisionModuleMgr.m_VisionModuleMap.size());
-    ui->testResultTable->setRowCount(filenames.size());
-    for(unsigned int j=0; j<filenames.size(); j++)
-    {
-        for(int k=0; k<=2; k++)
-        {
-            QTableWidgetItem *init = new QTableWidgetItem();
-            init->setText("0");
-            ui->testResultTable->setItem(j,k,init);
-        }
-    }
-
-    foreach (std::string var, filenames)
-    {
-        ui->testListWidget->item(i)->setSelected(true);
-        ui->testListWidget->setFocus();
-
-        qDebug() << var.c_str();
-        input_img = cv::imread(var,IMREAD_COLOR);
-        if(input_img.empty())
-        {
-            qDebug() << "input image null Error";
-            break;
-        }
-
-#if 0
-        emit sigSendTestMatImgToWorkerThread(input_img);
-        qApp->processEvents();
-#else
-        start = clock();
-        visionResult = m_cPatternModule.RunVision(input_img, output_img);
-        end = clock();
-
-        img_preprocess_t += (double)(end - start) / CLOCKS_PER_SEC;
-
-        cv::Point2f centerPt;
-        double dAngle;
-
-
-        if(!visionResult.GetCenterPoint(centerPt))
-        {
-            continue;
-        }
-
-        QString strCPX = QString::number(centerPt.x);
-        QString strCPY = QString::number(centerPt.y);
-        QString strCP = strCPX + ", " + strCPY;
-
-        if(!visionResult.GetAngle(dAngle))
-        {
-            continue;
-        }
-
-        QString strAngle = QString::number(dAngle* (180/3.14),'f',2);
-        QString tt = QString::number(((double)(end - start) / CLOCKS_PER_SEC),'f',2);
-
-        QTableWidgetItem *centerPoint = new QTableWidgetItem();
-        QTableWidgetItem *angle = new QTableWidgetItem();
-        QTableWidgetItem *tactTime = new QTableWidgetItem();
-
-        centerPoint->setText(strCP);
-        angle->setText(strAngle);
-        tactTime->setText(tt);
-
-        ui->testResultTable->setItem(i,0,centerPoint);
-        ui->testResultTable->setItem(i,1,angle);
-        ui->testResultTable->setItem(i,2,tactTime);
-
-        cvtColor(output_img, output_img, CV_BGR2RGB);
-
-        QImage img((uchar*)output_img.data,
-                   output_img.cols,
-                   output_img.rows,
-                   output_img.step,
-                   QImage::Format_RGB888);
-
-        QPixmap tmpPixmap = QPixmap::fromImage(img);
-        m_vTestTabImages.push_back(tmpPixmap);
-
-        emit sigUpdateMainViewer(tmpPixmap);
-        ui->graphicsView->scene()->setSceneRect(m_Pixmap->boundingRect());
-        ui->graphicsView->fitInView(ui->graphicsView->scene()->sceneRect(), Qt::KeepAspectRatio);
-        qApp->processEvents();
-#endif
-        i++;
-    }
-    qDebug("TIME : %5.2fs ", img_preprocess_t);
-}
-
 void OneBody::settingBackBtnClicked()
 {
     ui->stackedWidget->setCurrentIndex(0);
 }
 
-void OneBody::LoadModelData(CModelData m_ModelData)
+void OneBody::UpdatePatternModelUI(CModelData modelData)
 {
-    ui->lightOnCheckBox->setChecked((bool)m_ModelData.m_ilightEnable);
-    if(m_ModelData.m_iAlgoType == 0)
+    if(modelData.m_iAlgoType == VISION::PATTERN)
     {
-        QString testTemplate = QFileInfo(m_ModelData.m_qsTemplate).fileName();
-        QString testTemplatePath = QFileInfo(m_ModelData.m_qsTemplate).path();
+        QString testTemplate = QFileInfo(modelData.m_qsTemplate).fileName();
+        QString testTemplatePath = QFileInfo(modelData.m_qsTemplate).path();
         testTemplatePath += "/";
 
-        ui->teachPatternResize->setText(QString::number(m_ModelData.m_iResize));
-        ui->teachPatternMatch->setText(QString::number(m_ModelData.m_iMatchRate));
-
-        //ui->manualAlgoTab->setCurrentIndex(p_ModelData->m_iAlgoType);
-        ui->inspAlgoCombo->setCurrentIndex(m_ModelData.m_iAlgoType);
         QPixmap pixmap;
         QPixmap canny;
-        pixmap.load(m_ModelData.m_qsTemplate);
-        canny.load(testTemplatePath + QString("contour_def_canny_totally.bmp"));
-        //ui->inspPatternImage->setPixmap(pixmap);
-        //ui->teachTempLabel->setText(p_ModelData->m_qsTemplate);
-
-        //ui->manualTempLabel->setText(p_ModelData->m_qsTemplate);
+        pixmap.load(modelData.m_qsTemplate);
+        canny.load(testTemplatePath + QString("contour_def_canny_totally.bmp"));        
         ui->manualPatternImage->setPixmap(pixmap);
         ui->manualCannyImage->setPixmap(canny);
 
         cv::String templateFolder(testTemplatePath.toStdString());
         cv::String templateName(testTemplate.toStdString());
-
-        CVisionAgentResult visionResult;
-        std::vector<cv::String> filenames;
-
-        //m_cPatternModule.SetResizeRatio(g_iResizeRatio);
-        m_cPatternModule.InitPath(templateFolder, templateName, m_ModelData.m_iResize);
-
-        m_Roi = QRect(m_ModelData.m_iStartX, m_ModelData.m_iStartY, m_ModelData.m_iEndX, m_ModelData.m_iEndY);
     }
-    else if(m_ModelData.m_iAlgoType == 1)
-    {
-        //ui->manualAlgoTab->setCurrentIndex(p_ModelData->m_iAlgoType);
-        ui->inspAlgoCombo->setCurrentIndex(m_ModelData.m_iAlgoType);
-        ui->teachCircleThreshLowSlider->setValue(m_ModelData.m_iThresholdLow);
-        ui->teachCircleThreshHighSlider->setValue(m_ModelData.m_iThresholdHigh);
-        ui->teachCircleTolSpin->setValue(m_ModelData.m_iTolerance);
-        ui->teachCircleNoCombo->setCurrentText(QString::number(m_ModelData.m_iTargetNo));
-        ui->teachCircleRadEdit->setText(QString::number(m_ModelData.m_iRadius));
-
-        ui->manualLabel1->setText("Radius");
-        ui->manualRadWidthLabel->setText(QString::number(m_ModelData.m_iRadius));
-        ui->manualThreshLowLabel->setText(QString::number(m_ModelData.m_iThresholdLow));
-        ui->manualThreshHighLabel->setText(QString::number(m_ModelData.m_iThresholdHigh));
-        ui->manualTolLabel->setText(QString::number(m_ModelData.m_iTolerance));
-        ui->manualNoLabel->setText(QString::number(m_ModelData.m_iTargetNo));
-    }
-    else if(m_ModelData.m_iAlgoType == 2)
-    {
-        //ui->manualAlgoTab->setCurrentIndex(p_ModelData->m_iAlgoType);
-        ui->inspAlgoCombo->setCurrentIndex(m_ModelData.m_iAlgoType);
-        ui->teachRectThreshLowSlider->setValue(m_ModelData.m_iThresholdLow);
-        ui->teachRectThreshHighSlider->setValue(m_ModelData.m_iThresholdHigh);
-        ui->teachRectTolSpin->setValue(m_ModelData.m_iTolerance);
-        ui->teachRectNoCombo->setCurrentText(QString::number(m_ModelData.m_iTargetNo));
-        ui->teachRectWidthEdit->setText(QString::number(m_ModelData.m_iWidth));
-        ui->teachRectHeightEdit->setText(QString::number(m_ModelData.m_iHeight));
-
-        ui->manualLabel1->setText("Width");
-        ui->manualLabel2->setText("Height");
-        ui->manualRadWidthLabel->setText(QString::number(m_ModelData.m_iWidth));
-        ui->manualHeightLabel->setText(QString::number(m_ModelData.m_iHeight));
-        ui->manualThreshLowLabel->setText(QString::number(m_ModelData.m_iThresholdLow));
-        ui->manualThreshHighLabel->setText(QString::number(m_ModelData.m_iThresholdHigh));
-        ui->manualTolLabel->setText(QString::number(m_ModelData.m_iTolerance));
-        ui->manualNoLabel->setText(QString::number(m_ModelData.m_iTargetNo));
-    }
-
 }
 
 void OneBody::SaveModelData(CModelData * m_ModelData,  CDragBox * m_RoiRect)
 {
     m_ModelData->m_iResize = ui->teachPatternResize->text().toInt();
-    m_ModelData->m_iResize = ui->teachPatternMatch->text().toInt();
+    m_ModelData->m_iMatchRate = ui->teachPatternMatch->text().toInt();
     m_ModelData->m_iAlgoType = ui->inspAlgoCombo->currentIndex();
     m_ModelData->m_ilightEnable = ui->lightOnCheckBox->isChecked();
     if(m_RoiRect != nullptr)
@@ -730,13 +529,13 @@ void OneBody::SaveModelData(CModelData * m_ModelData,  CDragBox * m_RoiRect)
         m_ModelData->m_iEndY = 0;
     }
 
-    if(m_ModelData->m_iAlgoType == 1)
+    if(m_ModelData->m_iAlgoType == VISION::CIRCLE)
     {
         m_ModelData->m_iTolerance = ui->teachCircleTolSpin->text().toInt();
         m_ModelData->m_iTargetNo = ui->teachCircleNoCombo->currentText().toInt();
         m_ModelData->m_iRadius = ui->teachCircleRadEdit->text().toFloat();
     }
-    else if(m_ModelData->m_iAlgoType == 2)
+    else if(m_ModelData->m_iAlgoType == VISION::RECTANGLE)
     {
         m_ModelData->m_iTolerance = ui->teachRectTolSpin->text().toInt();
         m_ModelData->m_iTargetNo = ui->teachRectNoCombo->currentText().toInt();
@@ -747,128 +546,6 @@ void OneBody::SaveModelData(CModelData * m_ModelData,  CDragBox * m_RoiRect)
     {
 
     }
-}
-
-void OneBody::circle_algorithm()
-{
-    setCamStreamMode(CAM::LIVE_STOP);
-    clock_t start;
-    clock_t end;
-    double img_preprocess_t = 0.0;
-    QTableWidgetItem *centerPt = new QTableWidgetItem();
-    //ui->graphicsView->scene()->clear();
-
-    for(int i=0; i<testFilenames.size(); i++)
-    {
-        CCircleModule visionModule;
-        CVisionAgentResult visionResult;
-        QPixmap temp;
-        temp.load(testFilenames.at(i));
-
-        qDebug() << testFilenames.at(i);
-
-        Mat dispImg;
-        CCircleParams params;
-        params.iRadius = m_TeachModeTab.m_ModelData.m_iRadius;
-        params.dTolerance = m_TeachModeTab.m_ModelData.m_iTolerance * 0.1;
-        params.iThresholdHigh = m_TeachModeTab.m_ModelData.m_iThresholdHigh;
-        params.iThresholdLow = m_TeachModeTab.m_ModelData.m_iThresholdLow;
-
-        //        params.iRadius = 172;
-        //        params.dTolerance = 0.2;
-        //        params.iThresholdHigh = 90;
-        //        params.iThresholdLow = 0;
-
-        visionModule.SetParams(params);
-        visionModule.m_bDebugMode = true;
-
-        Mat srcImg = CImageConverter::QPixmapToCvMat(temp);
-#if 0
-        cv::cvtColor(srcImg, srcImg, CV_BGR2RGB);
-
-        QImage img((uchar*)srcImg.data,
-                   srcImg.cols,
-                   srcImg.rows,
-                   QImage::Format_RGB888);
-#else
-        start = clock();
-        visionResult = visionModule.RunVision(srcImg, dispImg);
-        end = clock();
-        img_preprocess_t += (double)(end - start) / CLOCKS_PER_SEC;
-
-        cv::cvtColor(dispImg, dispImg, CV_BGR2RGB);
-
-        QImage img((uchar*)dispImg.data,
-                   dispImg.cols,
-                   dispImg.rows,
-                   QImage::Format_RGB888);
-#endif
-        cv::Point2f tmpCenterPt;
-        if(!visionResult.GetCenterPoint(tmpCenterPt))
-        {
-            continue;
-        }
-
-
-        QString tmp = QString::number(tmpCenterPt.x) + ", "
-                + QString::number(tmpCenterPt.y);
-        centerPt->setText(tmp);
-
-        if(visionResult.bOk == true)
-        {
-            ui->testResultTable->setItem(i,0,centerPt);
-        }
-        else
-            QMessageBox::information(this, tr("information"), "No Search Hole", QMessageBox::Close);
-
-        //m_Pixmap->setPixmap(QPixmap::fromImage(img));
-        emit sigUpdateMainViewer(QPixmap::fromImage(img));
-        qApp->processEvents();
-        qDebug() << "finished";
-    }
-
-}
-
-void OneBody::circle_blob_algorithm()
-{    
-    setCamStreamMode(CAM::LIVE_STOP);
-
-    for(int i=0; i<testFilenames.size(); i++)
-    {
-        CCircleBlobModule visionModule;
-        QPixmap temp;
-        temp.load(testFilenames.at(i));
-
-        qDebug() << testFilenames.at(i);
-
-        Mat dispImg;
-        CCircleBlobParams params;
-        params.iRadius = m_TeachModeTab.m_ModelData.m_iRadius;
-        params.dTolerance = m_TeachModeTab.m_ModelData.m_iTolerance * 0.1;
-        params.iThresholdHigh = m_TeachModeTab.m_ModelData.m_iThresholdHigh;
-        params.iThresholdLow = m_TeachModeTab.m_ModelData.m_iThresholdLow;
-
-        visionModule.SetParams(params);
-        visionModule.m_bDebugMode = true;
-
-        Mat srcImg = CImageConverter::QPixmapToCvMat(temp);
-        visionModule.RunVision(srcImg, dispImg);
-
-        cv::cvtColor(dispImg, dispImg, CV_BGR2RGB);
-
-        QImage img((uchar*)dispImg.data,
-                   dispImg.cols,
-                   dispImg.rows,
-                   QImage::Format_RGB888);
-
-        emit sigUpdateMainViewer(QPixmap::fromImage(img));
-        qApp->processEvents();
-    }
-}
-
-void OneBody::rect_algorithm()
-{
-
 }
 
 void OneBody::init_model_ui()
@@ -963,49 +640,6 @@ void OneBody::cbAutoTabGetVisionProcessResult(_MatImg mat, CVisionAgentResult re
         ui->autoResultY->setText("");
         ui->autoResultAngle->setText("");
         ui->autoResultTact->setText("");
-    }
-}
-
-void OneBody::cbTestTabGetVisionProcessResult(_MatImg mat, CVisionAgentResult result)
-{
-    if(result.bOk)
-    {
-        //update result at table
-        cv::Point2f centerPt;
-        double dAngle;
-        if(!result.GetCenterPoint(centerPt) || !result.GetAngle(dAngle))
-        {
-            return;
-        }
-
-        QString strCPX = QString::number(centerPt.x);
-        QString strCPY = QString::number(centerPt.y);
-        QString strCP = strCPX + ", " + strCPY;
-        QString strAngle = QString::number(dAngle* (180/3.14),'f',2);
-        QString tt = QString::number(result.dTaktTime,'f',2);
-
-        QTableWidgetItem *centerPoint = new QTableWidgetItem();
-        QTableWidgetItem *angle = new QTableWidgetItem();
-        QTableWidgetItem *tactTime = new QTableWidgetItem();
-
-        centerPoint->setText(strCP);
-        angle->setText(strAngle);
-        tactTime->setText(tt);
-
-        int iRowCount = ui->testResultTable->rowCount();
-        ui->testResultTable->setItem(iRowCount,0,centerPoint);
-        ui->testResultTable->setItem(iRowCount,1,angle);
-        ui->testResultTable->setItem(iRowCount,2,tactTime);
-
-        //cvtColor(mat, mat, CV_BGR2RGB);
-        QPixmap tmpPixmap = CImageConverter::cvMatToQPixmap(mat);
-
-        m_MutexImg.lock();
-        m_Pixmap->setPixmap(tmpPixmap);
-        m_MutexImg.unlock();
-        ui->graphicsView->fitInView(ui->graphicsView->scene()->sceneRect(), Qt::KeepAspectRatio);
-
-        m_vTestTabImages.push_back(tmpPixmap);
     }
 }
 
@@ -1417,23 +1051,6 @@ void OneBody::on_inspLoadBtn_clicked()
     m_Pixmap->setPixmap(temp);
     ui->graphicsView->scene()->setSceneRect(m_Pixmap->boundingRect());
     ui->graphicsView->fitInView(ui->graphicsView->scene()->sceneRect(), Qt::KeepAspectRatio);
-}
-
-void OneBody::on_testLoadBtn_clicked()
-{
-    ui->testListWidget->clear();
-    testFilenames.clear();
-    QFileDialog *fileDlg = new QFileDialog(this);
-    testFilenames = fileDlg->getOpenFileNames(this, "Select file",
-                                              "/home/nvidia/Pictures",
-                                              tr("Image File(*.png *.bmp *.jpg)"));
-    if(testFilenames.empty())
-        return;
-    for(int i=0; i<testFilenames.size(); i++)
-    {
-        ui->testListWidget->addItem(QFileInfo(testFilenames.at(i)).fileName());
-    }
-    testFilePath = QFileInfo(testFilenames.at(0)).path();
 }
 
 void OneBody::cbUpdateMainViewer(QPixmap img)

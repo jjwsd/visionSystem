@@ -2,6 +2,8 @@
 #define MANUALMODETABUI_H
 
 #include <QObject>
+#include <QPixmap>
+
 #include <UI/TabUI.h>
 #include <CModelData.h>
 
@@ -22,6 +24,16 @@ public slots:
     void cbManualImageClearBtnClicked();
     void cbManualRunBtnClicked();
     void cbManualResultTableCellPressed(int row, int col);
+
+private:
+    void updateModelUI(CModelData modelData);
+    void pattern_matching();
+    void circle_algorithm();
+    void circle_blob_algorithm();
+    void rect_algorithm();
+
+    QStringList m_loadImageNames;
+    std::vector<QPixmap> m_vManualTabImgList;
 
 };
 
