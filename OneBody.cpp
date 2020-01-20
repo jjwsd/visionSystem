@@ -50,9 +50,11 @@ OneBody::OneBody(QWidget *parent) :
     initDataTab();
     initLogTab();
     load_settings();
-    //p_ModelData = new CModelData;
 
-    // auto Mode
+    //this
+    QObject::connect(ui->stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
+
+    //auto Mode
     QObject::connect(ui->autoBtnOpenVisionModule,SIGNAL(clicked()),&m_AutoModeTab,SLOT(cbOpenAutoModuleBtnClicked()));
     QObject::connect(ui->autoRunStopBtn, SIGNAL(clicked()),&m_AutoModeTab, SLOT(cbRunAutoModuleBtnClicked()));
     QObject::connect(ui->autoTriggerBtn, SIGNAL(clicked()),&m_AutoModeTab, SLOT(cbSWTriggerBtnClicked()));
@@ -87,7 +89,8 @@ OneBody::OneBody(QWidget *parent) :
     QObject::connect(ui->teachModelTestBtn, SIGNAL(clicked()), &m_TeachModeTab, SLOT(cbTeachModelTestBtnClicked()));
     QObject::connect(ui->stackedWidget, SIGNAL(currentChanged(int)), &m_TeachModeTab, SLOT(cbTeachROICancelBtnClicked()));
     QObject::connect(ui->teachSettingBtn, SIGNAL(clicked()), &m_TeachModeTab, SLOT(cbTeachSettingBtnClicked()));
-    QObject::connect(ui->stackedWidget, SIGNAL(currentChanged(int)), &m_TeachModeTab, SLOT(cbTabChanged()));
+    QObject::connect(ui->teachCheckOriginBtn, SIGNAL(clicked()), &m_TeachModeTab, SLOT(cbTeachCheckOriginBtnClicked()));
+
 
     //teach setting
     QObject::connect(ui->settingWidthSlider, SIGNAL(valueChanged(int)), this, SLOT(set_width_slider(int)));
@@ -481,7 +484,7 @@ void OneBody::on_clicked_resolution_applyBtn()
     }
 }
 
-int g_iResizeRatio = 4;
+
 
 void OneBody::settingBackBtnClicked()
 {
@@ -508,67 +511,7 @@ void OneBody::UpdatePatternModelUI(CModelData modelData)
     }
 }
 
-void OneBody::SaveModelData(CModelData * m_ModelData,  CDragBox * m_RoiRect)
-{
-    m_ModelData->m_iResize = ui->teachPatternResize->text().toInt();
-    m_ModelData->m_iMatchRate = ui->teachPatternMatch->text().toInt();
-    m_ModelData->m_iAlgoType = ui->inspAlgoCombo->currentIndex();
-    m_ModelData->m_ilightEnable = ui->lightOnCheckBox->isChecked();
-    if(m_RoiRect != nullptr)
-    {
-        m_ModelData->m_iStartX = m_RoiRect->getRectPosBySceneCoord().toRect().x();
-        m_ModelData->m_iStartY = m_RoiRect->getRectPosBySceneCoord().toRect().y();
-        m_ModelData->m_iEndX = m_RoiRect->getRectPosBySceneCoord().toRect().width();
-        m_ModelData->m_iEndY = m_RoiRect->getRectPosBySceneCoord().toRect().height();
-    }
-    else
-    {
-        m_ModelData->m_iStartX = 0;
-        m_ModelData->m_iStartY = 0;
-        m_ModelData->m_iEndX = 0;
-        m_ModelData->m_iEndY = 0;
-    }
 
-    if(m_ModelData->m_iAlgoType == VISION::CIRCLE)
-    {
-        m_ModelData->m_iTolerance = ui->teachCircleTolSpin->text().toInt();
-        m_ModelData->m_iTargetNo = ui->teachCircleNoCombo->currentText().toInt();
-        m_ModelData->m_iRadius = ui->teachCircleRadEdit->text().toFloat();
-    }
-    else if(m_ModelData->m_iAlgoType == VISION::RECTANGLE)
-    {
-        m_ModelData->m_iTolerance = ui->teachRectTolSpin->text().toInt();
-        m_ModelData->m_iTargetNo = ui->teachRectNoCombo->currentText().toInt();
-        m_ModelData->m_iWidth = ui->teachRectWidthEdit->text().toInt();
-        m_ModelData->m_iHeight = ui->teachRectHeightEdit->text().toInt();
-    }
-    else
-    {
-
-    }
-}
-
-void OneBody::init_model_ui()
-{
-//    //ui->manualAlgoTab->setCurrentIndex(p_ModelData->m_iAlgoType);
-//    //ui->manualTempLabel->setText(p_ModelData->m_qsTemplate);
-
-//    ui->inspAlgoCombo->setCurrentIndex(p_ModelData->m_iAlgoType);
-//    //ui->teachTempLabel->setText(p_ModelData->m_qsTemplate);
-//    ui->teachCircleThreshLowSlider->setValue(p_ModelData->m_iThresholdLow);
-//    ui->teachCircleThreshHighSlider->setValue(p_ModelData->m_iThresholdHigh);
-//    ui->teachCircleTolSpin->setValue(p_ModelData->m_iTolerance);
-//    ui->teachCircleNoCombo->setCurrentIndex(p_ModelData->m_iTargetNo);
-//    ui->teachCircleRadEdit->setText(QString::number(p_ModelData->m_iRadius));
-
-//    //ui->teachTempLabel->setText(p_ModelData->m_qsTemplate);
-//    ui->teachRectThreshLowSlider->setValue(p_ModelData->m_iThresholdLow);
-//    ui->teachRectThreshHighSlider->setValue(p_ModelData->m_iThresholdHigh);
-//    ui->teachRectTolSpin->setValue(p_ModelData->m_iTolerance);
-//    ui->teachRectNoCombo->setCurrentIndex(p_ModelData->m_iTargetNo);
-//    ui->teachRectWidthEdit->setText(QString::number(p_ModelData->m_iWidth));
-//    ui->teachRectHeightEdit->setText(QString::number(p_ModelData->m_iHeight));
-}
 
 void OneBody::automode_triggerBtn_enable()
 {
@@ -1184,5 +1127,50 @@ void OneBody::logtabComboBoxSelected(int item)
             iCount++;
         }
     }
+}
+
+void OneBody::tabChanged(int value)
+{
+    if(m_TeachModeTab.m_RoiRect != nullptr)
+    {
+        ui->graphicsView->scene()->removeItem(m_TeachModeTab.m_RoiRect);
+        delete m_TeachModeTab.m_RoiRect;
+        m_TeachModeTab.m_RoiRect = nullptr;
+    }
+    else
+    {
+        qDebug() << "m_RoiRect->IsEmpty()";
+    }
+    if(m_TeachModeTab.m_PatternRect != nullptr)
+    {
+        ui->graphicsView->scene()->removeItem(m_TeachModeTab.m_PatternRect);
+        delete m_TeachModeTab.m_PatternRect;
+        m_TeachModeTab.m_PatternRect = nullptr;
+    }
+    else
+    {
+        qDebug() << "m_PatternRect->IsEmpty()";
+    }
+    //clear model picture
+    ui->manualPatternImage->clear();
+    ui->manualCannyImage->clear();
+    //clear model data
+    m_AutoModeTab.m_ModelData.init();
+    m_ManualModeTab.m_ModelData.init();
+    m_TeachModeTab.m_ModelData.init();
+    //clear Auto table
+    ui->tableWidgetAutoModuleList->clear();
+    ui->tableWidgetAutoModuleList->setHorizontalHeaderItem(0, new QTableWidgetItem("Seq. Num"));
+    ui->tableWidgetAutoModuleList->setHorizontalHeaderItem(1, new QTableWidgetItem("Vision Type"));
+    ui->tableWidgetAutoModuleList->setRowCount(m_cVisionModuleMgr.m_VisionModuleMap.size());
+    //clear mannual table
+    ui->tableWidgetAutoModuleList_2->clear();
+    ui->tableWidgetAutoModuleList_2->setHorizontalHeaderItem(0, new QTableWidgetItem("Seq. Num"));
+    ui->tableWidgetAutoModuleList_2->setHorizontalHeaderItem(1, new QTableWidgetItem("Vision Type"));
+    //clear teach table
+    ui->tableWidgetAutoModuleList_3->clear();
+    ui->tableWidgetAutoModuleList_3->setHorizontalHeaderItem(0, new QTableWidgetItem("Seq. Num"));
+    ui->tableWidgetAutoModuleList_3->setHorizontalHeaderItem(1, new QTableWidgetItem("Vision Type"));
+
 }
 

@@ -151,15 +151,13 @@ public slots:
 
     void UpdatePatternModelUI(CModelData modelData);
 
-    void SaveModelData(CModelData * m_ModelData, CDragBox * m_RoiRect);
-
-    void init_model_ui();
-
     void cbAutoTabGetVisionProcessResult(_MatImg mat, CVisionAgentResult result);
     void cbUpdateMainViewer(QPixmap);
     void cbUpdateAutoModeImage();
 
     void logtabComboBoxSelected(int item);
+
+    void tabChanged(int index);
 
 signals:
     void sigUpdateMainViewer(QPixmap);

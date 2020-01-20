@@ -44,7 +44,9 @@ void CXmlParser::createXmlFile(QString fileName, CModelData m_ModelData)
         QDomElement endx = doc.createElement("endx");
         QDomElement endy = doc.createElement("endy");
         QDomElement matchRate = doc.createElement("matchRate");
-
+        QDomElement originX = doc.createElement("originX");
+        QDomElement originY = doc.createElement("originY");
+        QDomElement originAngle = doc.createElement("originAngle");
 
         algoType.setAttribute("type", (int)m_ModelData.m_iAlgoType);
         lightEnable.setAttribute("status", (int)m_ModelData.m_ilightEnable);
@@ -62,6 +64,9 @@ void CXmlParser::createXmlFile(QString fileName, CModelData m_ModelData)
         endx.setAttribute("value", (int)m_ModelData.m_iEndX);
         endy.setAttribute("value", (int)m_ModelData.m_iEndY);
         matchRate.setAttribute("value", (int)m_ModelData.m_iMatchRate);
+        originX.setAttribute("value", (float)m_ModelData.m_fOriginX);
+        originY.setAttribute("value", (float)m_ModelData.m_fOriginY);
+        originAngle.setAttribute("value", (float)m_ModelData.m_fOriginAngle);
 
         root.appendChild(algoType);
         root.appendChild(lightEnable);
@@ -79,6 +84,9 @@ void CXmlParser::createXmlFile(QString fileName, CModelData m_ModelData)
         root.appendChild(endx);
         root.appendChild(endy);
         root.appendChild(matchRate);
+        root.appendChild(originX);
+        root.appendChild(originY);
+        root.appendChild(originAngle);
 
         QTextStream stream(&file);
         stream << doc.toString();
@@ -142,6 +150,12 @@ void CXmlParser::openXmlFile(QString fileNamePath, CModelData* p_ModelData)
                 p_ModelData->m_iEndY = element.attribute("value").toInt();
             if(element.tagName() == "matchRate")
                 p_ModelData->m_iMatchRate = element.attribute("value").toInt();
+            if(element.tagName() == "originX")
+                p_ModelData->m_fOriginX = element.attribute("value").toFloat();
+            if(element.tagName() == "originY")
+                p_ModelData->m_fOriginY = element.attribute("value").toFloat();
+            if(element.tagName() == "originAngle")
+                p_ModelData->m_fOriginAngle = element.attribute("value").toFloat();
         }
         node = node.nextSibling();
     }

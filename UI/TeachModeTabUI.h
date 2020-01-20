@@ -16,6 +16,7 @@ public:
     explicit TeachModeTabUI(QObject *parent = 0);
 
     CModelData m_ModelData;
+
 signals:
 
 public slots:
@@ -42,17 +43,20 @@ public slots:
     void cbTeachModelLoadBtnClicked();
     void cbTeachModelTestBtnClicked();
     void cbTeachSettingBtnClicked();
-    void cbTabChanged();
+    void cbTeachCheckOriginBtnClicked();
+
 
 private:
-    CDragBox * m_PatternRect;
-    CDragBox * m_RoiRect;
+
     CPatternMatchModule m_cTeachPatternModule;
 
     void updateModelUI(CModelData modelData);
+    void saveModelData();
 
 
 public:
+    CDragBox * m_PatternRect;
+    CDragBox * m_RoiRect;
     void InitModelUI();
 
 };

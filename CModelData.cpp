@@ -18,6 +18,9 @@ CModelData::CModelData()
     m_iEndX=0;
     m_iEndY=0;
     m_iMatchRate=0;
+    m_fOriginX=0;
+    m_fOriginY=0;
+    m_fOriginAngle=0;
 }
 
 void CModelData::init()
@@ -38,5 +41,8 @@ void CModelData::init()
     m_iEndX=0;
     m_iEndY=0;
     m_iMatchRate=0;
+    m_fOriginX=0;
+    m_fOriginY=0;
+    m_fOriginAngle=0;
 }
 

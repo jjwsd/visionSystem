@@ -365,8 +365,26 @@ void TeachModeTabUI::cbTeachModelSaveBtnClicked()
     if (fileName.isEmpty())
         return;
 
-    m_MainWindow->SaveModelData(&m_ModelData, m_RoiRect);
+    QPixmap pixmap;
+    if(m_RoiRect != nullptr)
+    {
+        //m_MainWindow->grabQPixmapByRoi(pixmap, m_RoiRect->getRectPosBySceneCoord().toRect());
+    }
+    else
+    {
+       m_MainWindow->grabQPixmap(pixmap);
+    }
+
+    emit m_MainWindow->sigSaveImgToWorkerThread(pixmap, fileName);
+
+    saveModelData();
     m_MainWindow->xml.createXmlFile(fileName, m_ModelData);
+    if(m_PatternRect != nullptr)
+    {
+        ui->graphicsView->scene()->removeItem(m_PatternRect);
+        delete m_PatternRect;
+        m_PatternRect = nullptr;
+    }
 }
 
 void TeachModeTabUI::cbTeachModelLoadBtnClicked()
@@ -453,28 +471,50 @@ void TeachModeTabUI::cbTeachSettingBtnClicked()
     ui->stackedWidget->setCurrentIndex(4);
 }
 
-void TeachModeTabUI::cbTabChanged()
+void TeachModeTabUI::cbTeachCheckOriginBtnClicked()
 {
-    if(m_RoiRect != nullptr)
+    //Need Pattern Module Init
+
+    m_MainWindow->setCamStreamMode(CAM::LIVE_STOP);
+
+    Mat input_img;
+    Mat output_img;
+    cv::Point2f tempCP;
+    double tmpAngle;
+
+    m_MainWindow->grabMat(input_img);
+
+    if(input_img.empty())
     {
-        ui->graphicsView->scene()->removeItem(m_RoiRect);
-        delete m_RoiRect;
-        m_RoiRect = nullptr;
+        qDebug() << "input image null Error";
+        return;
     }
-    else
-    {
-        qDebug() << "m_RoiRect->IsEmpty()";
-    }
-    if(m_PatternRect != nullptr)
-    {
-        ui->graphicsView->scene()->removeItem(m_PatternRect);
-        delete m_PatternRect;
-        m_PatternRect = nullptr;
-    }
-    else
-    {
-        qDebug() << "m_PatternRect->IsEmpty()";
-    }
+    CVisionAgentResult result = m_cTeachPatternModule.RunVision(input_img, output_img);
+
+    ui->teachOrigintableWidget->clear();
+    ui->teachOrigintableWidget->setHorizontalHeaderItem(0, new QTableWidgetItem("X"));
+    ui->teachOrigintableWidget->setHorizontalHeaderItem(1, new QTableWidgetItem("Y"));
+    ui->teachOrigintableWidget->setHorizontalHeaderItem(2, new QTableWidgetItem("Angle"));
+    ui->teachOrigintableWidget->setRowCount(1);
+
+    QTableWidgetItem *firstItem = new QTableWidgetItem();
+    QTableWidgetItem *secondItem = new QTableWidgetItem();
+    QTableWidgetItem *thirdItem = new QTableWidgetItem();
+
+    result.GetCenterPoint(tempCP);
+    result.GetAngle(tmpAngle);
+
+    firstItem->setText(QString::number(tempCP.x));
+    secondItem->setText(QString::number(tempCP.y));
+    thirdItem->setText(QString::number(tmpAngle));
+
+    ui->teachOrigintableWidget->setItem(0, 0, firstItem);
+    ui->teachOrigintableWidget->setItem(0, 1, secondItem);
+    ui->teachOrigintableWidget->setItem(0, 2, thirdItem);
+
+    m_ModelData.m_fOriginX = tempCP.x;
+    m_ModelData.m_fOriginY = tempCP.y;
+    m_ModelData.m_fOriginAngle = tmpAngle;
 }
 
 void TeachModeTabUI::updateModelUI(CModelData modelData)
@@ -504,6 +544,46 @@ void TeachModeTabUI::updateModelUI(CModelData modelData)
         ui->teachRectNoCombo->setCurrentText(QString::number(m_ModelData.m_iTargetNo));
         ui->teachRectWidthEdit->setText(QString::number(m_ModelData.m_iWidth));
         ui->teachRectHeightEdit->setText(QString::number(m_ModelData.m_iHeight));
+    }
+}
+
+void TeachModeTabUI::saveModelData()
+{
+    m_ModelData.m_iResize = ui->teachPatternResize->text().toInt();
+    m_ModelData.m_iMatchRate = ui->teachPatternMatch->text().toInt();
+    m_ModelData.m_iAlgoType = ui->inspAlgoCombo->currentIndex();
+    m_ModelData.m_ilightEnable = ui->lightOnCheckBox->isChecked();
+    if(m_RoiRect != nullptr)
+    {
+        m_ModelData.m_iStartX = m_RoiRect->getRectPosBySceneCoord().toRect().x();
+        m_ModelData.m_iStartY = m_RoiRect->getRectPosBySceneCoord().toRect().y();
+        m_ModelData.m_iEndX = m_RoiRect->getRectPosBySceneCoord().toRect().width();
+        m_ModelData.m_iEndY = m_RoiRect->getRectPosBySceneCoord().toRect().height();
+    }
+    else
+    {
+        m_ModelData.m_iStartX = 0;
+        m_ModelData.m_iStartY = 0;
+        m_ModelData.m_iEndX = 0;
+        m_ModelData.m_iEndY = 0;
+    }
+
+    if(m_ModelData.m_iAlgoType == VISION::CIRCLE)
+    {
+        m_ModelData.m_iTolerance = ui->teachCircleTolSpin->text().toInt();
+        m_ModelData.m_iTargetNo = ui->teachCircleNoCombo->currentText().toInt();
+        m_ModelData.m_iRadius = ui->teachCircleRadEdit->text().toFloat();
+    }
+    else if(m_ModelData.m_iAlgoType == VISION::RECTANGLE)
+    {
+        m_ModelData.m_iTolerance = ui->teachRectTolSpin->text().toInt();
+        m_ModelData.m_iTargetNo = ui->teachRectNoCombo->currentText().toInt();
+        m_ModelData.m_iWidth = ui->teachRectWidthEdit->text().toInt();
+        m_ModelData.m_iHeight = ui->teachRectHeightEdit->text().toInt();
+    }
+    else
+    {
+
     }
 }
 

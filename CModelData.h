@@ -30,6 +30,9 @@ public:
     int m_iEndX;
     int m_iEndY;
     int m_iMatchRate;
+    float m_fOriginX;
+    float m_fOriginY;
+    float m_fOriginAngle;
 
     void init();
 };
